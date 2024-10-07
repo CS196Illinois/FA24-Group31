@@ -21,6 +21,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+    implementation("org.xerial:sqlite-jdbc:3.46.1.3")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -29,5 +30,4 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(23) } }
 application {
     // Define the main class for the application.
     mainClass = "org.example.App"
-}
 }
