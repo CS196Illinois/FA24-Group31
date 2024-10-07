@@ -1,7 +1,7 @@
 /**
 This class contains the information of a {@link User} object. One user is a row in the database, and contains the following fields:
 indentifer, first name, last name, riot ID, and discord ID.
-@@author adhit2
+@author adhit2
 */
 package org.server;
 
