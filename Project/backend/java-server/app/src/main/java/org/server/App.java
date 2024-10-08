@@ -10,6 +10,8 @@ public class App {
     }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreetings());
+        System.out.println(new App().getGreeting());
+        DBController dbController = new DBController("jdbc:sqlite:main.db");
+        System.out.println(dbController.getUser("yzk5", true));
     }
 }
