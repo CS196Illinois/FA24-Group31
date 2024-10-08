@@ -28,21 +28,20 @@ public class DBController {
             statement.setQueryTimeout(30);
             ResultSet rs = statement.executeQuery(
                 "select * from users where " +
-                (isDiscord ? "discordID" : "uuid") +
-                " = " +
-                param
+                (isDiscord ? "discord_id" : "uuid") +
+                " = \"" +
+                param +
+                "\""
             );
             if (rs.next()) {
                 return new User(
                     rs.getString("uuid"),
-                    rs.getString("firstName"),
-                    rs.getString("lastName"),
-                    rs.getString("riotID"),
-                    rs.getString("discordID"),
-                    rs
-                        .getJson("oneWayMatched")
-                        .rs.getJson("twoWayMatched")
-                        .split(",")
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    rs.getString("riot_id"),
+                    rs.getString("discord_id"),
+                    rs.getString("one_way_matched").split(","),
+                    rs.getString("two_way_matched").split(",")
                 );
             }
         } catch (SQLException e) {
@@ -59,7 +58,7 @@ public class DBController {
         return null;
     }
 
-    public static void testDB() {
+    public void testDB() {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(dbPath);

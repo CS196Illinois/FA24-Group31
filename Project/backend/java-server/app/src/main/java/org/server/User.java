@@ -1,3 +1,5 @@
+package org.server;
+
 import java.util.HashSet;
 
 /**
@@ -35,12 +37,12 @@ public class User {
     /**
      * The ids of users that this user has matched with but not the other way around.
      */
-    private HashSet<String> oneWayMatched;
+    private HashSet<String> oneWayMatched = new HashSet<>();
 
     /**
      * The ids of users that this user has matched with that have also matched with them.
      */
-    private HashSet<String> twoWayMatched;
+    private HashSet<String> twoWayMatched = new HashSet<>();
 
     /**
      * Constructs a new User with the specified details.
@@ -68,10 +70,10 @@ public class User {
         this.riotID = riotID;
         this.discordID = discordID;
         for (String s : oneWayMatched) {
-            addOneWayMatched(s);
+            this.oneWayMatched.add(s);
         }
         for (String s : twoWayMatched) {
-            addTwoWayMatched(s);
+            this.twoWayMatched.add(s);
         }
     }
 
