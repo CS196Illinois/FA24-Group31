@@ -8,8 +8,15 @@ import java.sql.Statement;
 
 public class DBController {
 
+    /**
+     * The path to the database.
+     */
     private String dbPath;
 
+    /**
+     * Constructs a new {@link DBController} with the specified database path.
+     * @param dbPath the path to the database
+     */
     public DBController(String dbPath) {
         this.dbPath = dbPath;
     }
@@ -58,6 +65,9 @@ public class DBController {
         return null;
     }
 
+    /**
+     * Tests the database connection.
+     */
     public void testDB() {
         Connection connection = null;
         try {
