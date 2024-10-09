@@ -1,5 +1,7 @@
 package org.server;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
