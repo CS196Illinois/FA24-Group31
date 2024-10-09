@@ -1,3 +1,31 @@
+# Web Server
+
+## Tasks
+
+Ranked by urgency:
+
+- [ ] Setup web server (can't do shit without the web server being up yet)
+- [ ] Setup out account creation
+- [ ] figure out login/secret token logic
+
+## Routes
+
+- **/api/v1/check_in**
+	- have front end check in at an interval to make sure it is still connected to the backend
+	- response: "OK" with status code 200 on success
+- **/api/v1/users/create_user**
+	- create new user in db
+	- response: ??
+- **/api/v1/users/delete_user_{by_discord_id? or by_uuid?}**
+	- delete user from db
+	- response: ??
+- **/api/v1/users/fetch_by_discord_id**
+	- fetch user info by discord_id
+	- response: ??
+- **/api/v1/users/fetch_by_uuid**
+	- fetch user info by uuid
+	- response: ??
+
 # DB
 
 > [!NOTE]
