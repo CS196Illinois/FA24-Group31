@@ -1,0 +1,78 @@
+.header {
+  height: 60px;
+  margin-bottom: 0; /* Remove margin to connect the header and section */
+  margin-top: 10px;
+  background-color: var(--mantine-color-body); /* Keep header background as is */
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  display: flex;
+  justify-content: center; /* Ensures the title bar is centered horizontally */
+}
+
+.inner {
+  width: 100%;
+  max-width: 1200px; /* Restricting width for large screens */
+  height: 56px;
+  display: flex;
+  justify-content: space-between; /* Spreads logo, title, and links apart */
+  align-items: center;
+  padding: 0 20px; /* Adding some padding for spacing */
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-left: 20px; /* Spacing the title a little away from the logo */
+}
+
+.link {
+  display: block;
+  line-height: 1;
+  padding: 10px 15px; /* Making padding more compact */
+  border-radius: var(--mantine-radius-sm);
+  text-decoration: none;
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+  font-size: var(--mantine-font-size-md); 
+  font-weight: 500;
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  }
+}
+
+.links {
+  display: flex;
+  gap: 20px; /* Adds space between the links */
+}
+
+.burger {
+  display: none; /* Ensures the burger menu doesn't appear on larger screens */
+}
+
+.description {
+  font-size: 20px; /* Adjust this value as needed */
+  margin-top: 10px; /* Optional: Adds spacing above the description */
+}
+
+.section {
+  background: linear-gradient(to bottom, rgba(72, 152, 199, 0.8), rgba(255, 255, 255, 0)); /* Blue fade effect */
+  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header */
+  padding: 20px; /* Optional: Adds padding inside the section */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically if desired */
+}
+
+@media (max-width: 768px) {
+  .inner {
+    justify-content: space-between;
+  }
+
+  .links {
+    display: none; /* Hides the links on small screens */
+  }
+
+  .burger {
+    display: block; /* Shows the burger menu on small screens */
+  }
+}
