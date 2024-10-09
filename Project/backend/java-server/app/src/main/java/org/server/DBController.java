@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class DBController {
 
@@ -65,6 +67,48 @@ public class DBController {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the user with the specified parameter.
+     * @param param the parameter to search for
+     * @param isDiscord whether the parameter is a Discord ID or a UUID
+     * @return the user with the specified parameter
+     */
+    public void addUser(User user) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(dbPath);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);
+            statement.executeUpdate(
+                "insert into users values (" +
+                user.getIdentifier() +
+                ", " +
+                user.getFirstName() +
+                ", " +
+                user.getLastName() +
+                ", " +
+                user.getRiotID() +
+                ", " +
+                user.getDiscordID() +
+                ", json_array(" +
+                Arrays.toString(user.getOneWayMatched().toArray()) +
+                "), json_array(" +
+                Arrays.toString(user.getTwoWayMatched().toArray()) +
+                "))"
+            );
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
     }
 
     /**

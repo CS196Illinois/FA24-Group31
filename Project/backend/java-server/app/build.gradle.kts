@@ -30,5 +30,5 @@ java { toolchain { languageVersion = JavaLanguageVersion.of(23) } }
 
 application {
     // Define the main class for the application.
-    mainClass = "org.server.App"
+    mainClass = "org.server.Main"
 }
