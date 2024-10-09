@@ -168,6 +168,20 @@ public class User {
     }
 
     /**
+     * Gets the oneWayMatched set.
+     */
+    public HashSet<String> getOneWayMatched() {
+        return oneWayMatched;
+    }
+
+    /**
+     * Gets the twoWayMatched set.
+     */
+    public HashSet<String> getTwoWayMatched() {
+        return twoWayMatched;
+    }
+
+    /**
      * Adds a user to the oneWayMatched set.
      *
      * @param user the user to be added
