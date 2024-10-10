@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Set;
 
 /**
  * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
@@ -72,6 +73,13 @@ public class DBController {
         throw new NullPointerException("User not found");
     }
 
+    private String toJsonArrayParse(Set<String> set) {
+        return Arrays.toString(set.toArray()).substring(
+            1,
+            Arrays.toString(set.toArray()).length() - 1
+        );
+    }
+
     /**
      * Gets the user with the specified parameter.
      * @param param the parameter to search for
@@ -92,14 +100,8 @@ public class DBController {
             pstmt.setString(3, user.getDiscordID());
             pstmt.setString(4, user.getFirstName());
             pstmt.setString(5, user.getLastName());
-            pstmt.setString(
-                6,
-                Arrays.toString(user.getOneWayMatched().toArray())
-            );
-            pstmt.setString(
-                7,
-                Arrays.toString(user.getTwoWayMatched().toArray())
-            );
+            pstmt.setString(6, toJsonArrayParse(user.getOneWayMatched()));
+            pstmt.setString(7, toJsonArrayParse(user.getTwoWayMatched()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
