@@ -25,6 +25,11 @@ Ranked by urgency:
 - **/api/v1/users/fetch_by_uuid**
 	- fetch user info by uuid
 	- response: ??
+- **/api/v1/auth/check_if_discord_id_exist**
+    - check if discord id is already in db
+    - response: {"exists": true, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"} or {"exists": false, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"}
+        - redirect to account creation if response "exists": false
+        - redirect to profile page if response "exists": true
 
 # DB
 
@@ -38,8 +43,6 @@ Ranked by urgency:
 > If you accidentally corrupt the database while testing, do `cp main.db.bak main.db'
 
 ## Users
-
-#### Table Structure
 
 uuid: String (Primary Key)
 
@@ -55,6 +58,10 @@ one_way_matched: json_array
 
 two_way_matched: json_array
 
-| uuid | riot_id | discord_id | first_name | last_name | one_way_matched | two_way_matched |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| "ca6db7a0-5755-45d2-a994-4d0a3614cfa3" | "0xSec#6969" | "yzk5" | "Raymond" | "Yang" | ["2ad9303f-4cea-43fe-bac4-e1fcec783a6b", "bf82051f-f586-41ea-ad55-d1968e21ba24", "f299ed0f-0c92-4ce3-bcc7-82a3f6c94924"] | ["9ddf2a72-59ee-4892-adfd-cd675a1eb4d6", "989a43f7-b6d4-41f9-8662-04b16c182c7b"]
+auth_token: String
+
+refresh_token: String
+
+| uuid | riot_id | discord_id | first_name | last_name | one_way_matched | two_way_matched | auth_token | refresh_token |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| "ca6db7a0-5755-45d2-a994-4d0a3614cfa3" | "0xSec#6969" | "yzk5" | "Raymond" | "Yang" | ["2ad9303f-4cea-43fe-bac4-e1fcec783a6b", "bf82051f-f586-41ea-ad55-d1968e21ba24", "f299ed0f-0c92-4ce3-bcc7-82a3f6c94924"] | ["9ddf2a72-59ee-4892-adfd-cd675a1eb4d6", "989a43f7-b6d4-41f9-8662-04b16c182c7b"] | "6qrZcUqja7812RVdnEKjpzOL4CvHBFG" | "D43f5y0ahjqew82jZ4NViEr2YafMKhue" |
