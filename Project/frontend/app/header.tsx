@@ -1,3 +1,5 @@
+// Header Component 
+
 "use client";
 
 import React from "react"
@@ -25,6 +27,7 @@ import Link from 'next/link';
 
 
 
+// Temporary links for now, potential pages for later 
 const links = [
   { link: '/about', label: 'Our Mission  ' },
   { link: '/pricing', label: 'About Us  ' },
