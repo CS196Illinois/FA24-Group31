@@ -5,7 +5,7 @@ import java.util.HashSet;
 /**
 This class contains the information of a {@link User} object. One user is a row in the database, and contains the following fields:
 identifer, first name, last name, riot ID, a {@link HashSet} for determining the users that this user has matched with but not the other way around, a {@link HashSet} for determining the users that this user has matched with that have also matched with them,
-and discord ID.
+and discord ID. Largely null values result in empty {@link String}'s or empty {@link Set}'s
 @author adhit2
 */
 public class User {
@@ -64,16 +64,44 @@ public class User {
         String[] oneWayMatched,
         String[] twoWayMatched
     ) {
-        this.identifier = identifier;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.riotID = riotID;
-        this.discordID = discordID;
-        for (String s : oneWayMatched) {
-            this.oneWayMatched.add(s);
+        if (identifier != null) {
+            this.identifier = identifier;
+        } else {
+            this.identifier = "";
         }
-        for (String s : twoWayMatched) {
-            this.twoWayMatched.add(s);
+        if (firstName != null) {
+            this.firstName = firstName;
+        } else {
+            this.firstName = "";
+        }
+        if (lastName != null) {
+            this.lastName = lastName;
+        } else {
+            this.lastName = "";
+        }
+        if (riotID != null) {
+            this.riotID = riotID;
+        } else {
+            this.riotID = "";
+        }
+        if (discordID != null) {
+            this.discordID = discordID;
+        } else {
+            this.discordID = "";
+        }
+        if (oneWayMatched != null) {
+            for (String s : oneWayMatched) {
+                this.oneWayMatched.add(s);
+            }
+        } else {
+            this.oneWayMatched = new HashSet<>();
+        }
+        if (twoWayMatched != null) {
+            for (String s : twoWayMatched) {
+                this.twoWayMatched.add(s);
+            }
+        } else {
+            this.twoWayMatched = new HashSet<>();
         }
     }
 
@@ -92,6 +120,9 @@ public class User {
      * @param identifier the new identifier
      */
     public void setIdentifier(String identifier) {
+        if (identifier == null) {
+            identifier = "";
+        }
         this.identifier = identifier;
     }
 
@@ -110,6 +141,9 @@ public class User {
      * @param firstName the new first name
      */
     public void setFirstName(String firstName) {
+        if (firstName == null) {
+            firstName = "";
+        }
         this.firstName = firstName;
     }
 
@@ -128,6 +162,9 @@ public class User {
      * @param lastName the new last name
      */
     public void setLastName(String lastName) {
+        if (lastName == null) {
+            lastName = "";
+        }
         this.lastName = lastName;
     }
 
@@ -146,6 +183,9 @@ public class User {
      * @param riotID the new Riot ID
      */
     public void setRiotID(String riotID) {
+        if (riotID == null) {
+            riotID = "";
+        }
         this.riotID = riotID;
     }
 
@@ -163,6 +203,9 @@ public class User {
      * @param discordID the discord ID to be set.
      */
     public void setDiscordID(String discordID) {
+        if (discordID == null) {
+            discordID = "";
+        }
         this.discordID = discordID;
     }
 
@@ -189,6 +232,8 @@ public class User {
     public boolean addOneWayMatched(String user) {
         if (oneWayMatched == null) {
             oneWayMatched = new HashSet<>();
+        } else if (user == null) {
+            return false;
         }
         return oneWayMatched.add(user);
     }
@@ -200,7 +245,7 @@ public class User {
      * @return true if the user was removed, false if the user was not in the set
      */
     public boolean deleteOneWayMatched(String user) {
-        if (oneWayMatched != null) {
+        if (oneWayMatched != null && user != null) {
             return oneWayMatched.remove(user);
         }
         return false;
@@ -213,7 +258,7 @@ public class User {
      * @return true if the user is in the set, false otherwise
      */
     public boolean isOneWayMatched(String user) {
-        if (oneWayMatched != null) {
+        if (oneWayMatched != null && user != null) {
             return oneWayMatched.contains(user);
         }
         return false;
@@ -225,7 +270,7 @@ public class User {
      * @return true if the user was added, false if the user was already in the set
      */
     public boolean moveToTwoWayMatched(String user) {
-        if (oneWayMatched != null) {
+        if (oneWayMatched != null && user != null) {
             if (oneWayMatched.remove(user)) {
                 if (twoWayMatched == null) {
                     twoWayMatched = new HashSet<>();
@@ -243,7 +288,7 @@ public class User {
      * @return true if the user was removed, false if the user was not in the set
      */
     public boolean deleteTwoWayMatched(String user) {
-        if (twoWayMatched != null) {
+        if (twoWayMatched != null && user != null) {
             return twoWayMatched.remove(user);
         }
         return false;
@@ -256,7 +301,7 @@ public class User {
      * @return true if the user is in the set, false otherwise
      */
     public boolean isTwoWayMatched(String user) {
-        if (twoWayMatched != null) {
+        if (twoWayMatched != null && user != null) {
             return twoWayMatched.contains(user);
         }
         return false;
