@@ -12,16 +12,19 @@ import classes from '../HeaderSimple.module.css';
 const GetStarted = () => {
   return (
     <>
+    <HeaderSimple />
       <Head>
         <title>Get Started</title>
       </Head>
-      <Container size = "xl"> 
-        <HeaderSimple />
+      <Container size="xl" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '75vh', flexDirection: 'column' }}> 
+        
         <Text size="xl">Welcome to the Get Started Page!</Text>
-        <p>This is a blank page for new users.</p>
+        <Text size="md">This is a blank page for new users.</Text>
 
-        {/* Change href for discord link later on*/}
-        <Button component={Link} href="/get-started" className={classes.loginButton} mt="xl"></Button>
+        {/* Dicsord Login Link*/}
+        <Button component={Link} href="/get-started" className={classes.loginButton} mt="xl" justify="center"> Login with Discord </Button>
+        
+        {/* Add any other login methods below if needed...*/}
       </Container>
     </>
   );
