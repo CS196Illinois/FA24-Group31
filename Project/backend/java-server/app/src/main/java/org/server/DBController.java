@@ -81,10 +81,8 @@ public class DBController {
     }
 
     /**
-     * Gets the user with the specified parameter.
-     * @param param the parameter to search for
-     * @param isDiscord whether the parameter is a Discord ID or a UUID
-     * @return the user with the specified parameter
+     * Adds a user to the database.
+     * @param user the user to add
      */
     public void addUser(User user) {
         Connection connection = null;
