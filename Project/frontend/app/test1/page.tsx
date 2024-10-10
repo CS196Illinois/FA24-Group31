@@ -1,3 +1,4 @@
+// PAGE NOT BEING USED, EXAMPLE THAT JEFREY MADE
 'use client';
 
 import { useState } from 'react';
