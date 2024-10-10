@@ -1,8 +1,13 @@
-// pages/get-started/get-started.tsx
+// Get started page
 import React from 'react';
-import { Container } from '@mantine/core';
+import { Container, Button, Text } from '@mantine/core';
 import { HeaderSimple } from "../header";
 import Head from 'next/head';
+import Link from 'next/link';
+import classes from '../HeaderSimple.module.css';
+
+
+
 
 const GetStarted = () => {
   return (
@@ -10,10 +15,13 @@ const GetStarted = () => {
       <Head>
         <title>Get Started</title>
       </Head>
-      <Container size = "xl"> {/* You can adjust the size to suit your layout */}
+      <Container size = "xl"> 
         <HeaderSimple />
-        <h1>Welcome to the Get Started Page!</h1>
+        <Text size="xl">Welcome to the Get Started Page!</Text>
         <p>This is a blank page for new users.</p>
+
+        {/* Change href for discord link later on*/}
+        <Button component={Link} href="/get-started" className={classes.loginButton} mt="xl"></Button>
       </Container>
     </>
   );

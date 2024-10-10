@@ -13,13 +13,13 @@ import { HeaderSimple } from "./header";
 
 
 
-  const theme = createTheme({
+const theme = createTheme({
   fontSizes: {
     xs: '0.5rem',
     sm: '0.75rem',
     md: '1rem',
     lg: '1.25rem',
-    xl: '1.9rem', // Adjust this value to your desired size
+    xl: '1.9rem', 
     xxl: '2.5rem'
   },
 });
@@ -27,7 +27,7 @@ import { HeaderSimple } from "./header";
 
 
 
-
+{/* Homepage */}
 export default function Home() {
   return (
     <MantineProvider theme={theme}> 
@@ -35,9 +35,15 @@ export default function Home() {
         <HeaderSimple />
         <section className={classes.section}>
           <Container className={classes.content}>
+
+            {/* Hero text */}
+
             <Text size="xxl" fw={550} c="white"> A League of Legends themed matching app.</Text>
             <Text size="md" fw={500} c="white">Find your perfect partner, in-game or in-real-life.</Text>
-            <Link href="/get-started/get-started"> {/* Adjust the path based on your folder structure */}
+
+            {/* Get started button */}
+
+            <Link href="/get-started/get-started"> 
             <Button component={Link} href="/get-started" className={classes.getStartedButton} mt="xl">
             Get Started
             </Button>
