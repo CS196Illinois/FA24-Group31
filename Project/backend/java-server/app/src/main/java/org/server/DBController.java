@@ -1,14 +1,12 @@
 package org.server;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.HashSet;
 
 public class DBController {
 
@@ -66,7 +64,7 @@ public class DBController {
                 System.err.println(e);
             }
         }
-        return null;
+        throw new NullPointerException("User not found");
     }
 
     /**
@@ -81,23 +79,23 @@ public class DBController {
             connection = DriverManager.getConnection(dbPath);
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);
-            statement.executeUpdate(
-                "insert into users values (" +
-                user.getIdentifier() +
-                ", " +
-                user.getFirstName() +
-                ", " +
-                user.getLastName() +
-                ", " +
-                user.getRiotID() +
-                ", " +
-                user.getDiscordID() +
-                ", json_array(" +
-                Arrays.toString(user.getOneWayMatched().toArray()) +
-                "), json_array(" +
-                Arrays.toString(user.getTwoWayMatched().toArray()) +
-                "))"
+            String sql =
+                "insert into users (uuid, riot_id, discord_id, first_name, last_name, one_way_matched, two_way_matched) values (?, ?, ?, ?, ?, json_array(?), json_array(?))";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, user.getIdentifier());
+            pstmt.setString(2, user.getRiotID());
+            pstmt.setString(3, user.getDiscordID());
+            pstmt.setString(4, user.getFirstName());
+            pstmt.setString(5, user.getLastName());
+            pstmt.setString(
+                6,
+                Arrays.toString(user.getOneWayMatched().toArray())
             );
+            pstmt.setString(
+                7,
+                Arrays.toString(user.getTwoWayMatched().toArray())
+            );
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {

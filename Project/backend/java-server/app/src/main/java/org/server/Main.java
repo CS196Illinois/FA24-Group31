@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         //start server listening on port 8080:
         DBController dbController = new DBController("jdbc:sqlite:main.db");
-        System.out.println(dbController.getUser("yzk7", true).toString());
+        System.out.println(dbController.getUser("yzk5", true).toString());
         String[] one = { "aaksljfhaksjdfh", "alkdsfjhalksdjfh" };
         String[] two = { "sdkfjhsdjf", "skdjfhsdjfh" };
         User me = new User(
