@@ -9,6 +9,11 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Set;
 
+/**
+ * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
+ * @author adhit2
+ */
+
 public class DBController {
 
     /**
