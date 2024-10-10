@@ -7,13 +7,16 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  position: relative; /* Allows absolutely positioned children */
 }
-  
+
 .homepageTitle {
   color: white;
   font-size: 2.5rem;
   font-weight: bold;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
+  position: absolute; /* Positions the title absolutely within the container */
+  top: 20px; /* Adjusts the top position of the title */
 }
 /*  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header
 padding: 20px; Optional: Adds padding inside the section
