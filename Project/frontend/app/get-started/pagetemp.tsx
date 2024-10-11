@@ -1,3 +1,5 @@
+// NOT BEING USED, EXAMPLE THAT JEFFREY MADE
+
 'use client';
 
 import Image from 'next/image';
