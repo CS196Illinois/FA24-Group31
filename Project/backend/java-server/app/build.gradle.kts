@@ -11,6 +11,7 @@ plugins {
     id("org.springframework.boot") version "3.3.4"
     id("io.spring.dependency-management") version "1.1.6"
     id("org.graalvm.buildtools.native") version "0.10.3"
+    id("com.adarshr.test-logger") version "4.0.0"
 }
 version "1.0-SNAPSHOT"
 
@@ -32,6 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.mockito:mockito-core:4.0.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
