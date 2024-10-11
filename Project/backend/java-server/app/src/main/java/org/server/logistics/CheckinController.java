@@ -8,6 +8,6 @@ public class CheckinController {
 
     @GetMapping("/api/v1/check_in")
     public String check_in() {
-        return "Hello, world!";
+        return "OK";
     }
 }

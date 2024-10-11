@@ -98,7 +98,7 @@ public class DBControllerTest {
         try (Connection connection = DriverManager.getConnection(DB_URL)) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(
-                "DELETE FROM users where discordid like 'discord%'"
+                "DELETE FROM users where discord_id like 'discord%'"
             );
         }
     }
