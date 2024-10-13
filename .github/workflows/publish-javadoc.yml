@@ -20,7 +20,7 @@ jobs:
           version: 1.0
       - name: Generate Javadoc
         shell: bash
-        run: cd Project/backend/java-server/app && javadoc -d ../../javadoc -sourcepath src/main/java -subpackages org.server -Xdoclint:none
+        run: cd Project/backend/java-server/app && javadoc -d ../../javadoc -sourcepath src/main/java -subpackages org.server -Xdoclint:none --ignore-source-errors
       - name: Get branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
