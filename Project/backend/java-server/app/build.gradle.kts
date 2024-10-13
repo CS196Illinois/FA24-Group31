@@ -12,6 +12,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.6"
     id("org.graalvm.buildtools.native") version "0.10.3"
     id("com.adarshr.test-logger") version "4.0.0"
+    id("com.gradleup.shadow") version "8.3.3"
 }
 version "1.0-SNAPSHOT"
 
@@ -29,7 +30,6 @@ dependencies {
     implementation(libs.guava)
     implementation("org.xerial:sqlite-jdbc:3.46.1.3")
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
@@ -39,10 +39,6 @@ dependencies {
 // Apply a specific Java toolchain to ease working on different environments.
 java { toolchain { languageVersion = JavaLanguageVersion.of(23) } }
 
-application {
-    mainClass = "org.server.Main"
-}
+application { mainClass = "org.server.Main" }
 
-tasks.withType<Test> {
-  useJUnitPlatform()
-}
+tasks.withType<Test> { useJUnitPlatform() }

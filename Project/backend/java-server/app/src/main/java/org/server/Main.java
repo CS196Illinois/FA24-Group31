@@ -1,26 +1,31 @@
 package org.server;
 
+import java.util.Arrays;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
 public class Main {
 
     public static void main(String[] args) {
-        //start server listening on port 8080:
-        DBController dbController = new DBController("jdbc:sqlite:main.db");
-        System.out.println(dbController.getUser("yzk5", true).toString());
-        String[] one = { "aaksljfhaksjdfh", "alkdsfjhalksdjfh" };
-        String[] two = { "sdkfjhsdjf", "skdjfhsdjfh" };
-        User me = new User(
-            "sdlfkjsdlfkjsdlfkjsdlkfj",
-            "Adhi",
-            "Thirumala",
-            "uptonsinclairthe#jngl",
-            "adhiadhiadhiadhi",
-            one,
-            two
-        );
-        dbController.addUser(me);
-        System.out.println(me);
-        System.out.println(
-            dbController.getUser("sdlfkjsdlfkjsdlfkjsdlkfj", false).toString()
-        );
+        SpringApplication.run(Main.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+        return args -> {
+            System.out.println(
+                "Let's inspect the beans provided by Spring Boot:"
+            );
+
+            String[] beanNames = ctx.getBeanDefinitionNames();
+            Arrays.sort(beanNames);
+            for (String beanName : beanNames) {
+                System.out.println(beanName);
+            }
+        };
     }
 }
