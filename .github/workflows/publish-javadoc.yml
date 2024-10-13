@@ -1,0 +1,32 @@
+name: Deploy Javadoc
+
+on:
+  push:
+    branches-ignore:
+      - master
+    paths:
+      - '**.java'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache apt packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: openjdk-21-jdk-headless
+          version: 1.0
+      - name: Generate Javadoc
+        shell: bash
+        run: cd Project/backend/java-server/app && javadoc -d ../../javadoc -sourcepath src/main/java -subpackages org.server -Xdoclint:none --ignore-source-errors
+      - name: Get branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Auto generated Javadocs by Actions
+          branch: ${{ steps.extract_branch.outputs.branch }}

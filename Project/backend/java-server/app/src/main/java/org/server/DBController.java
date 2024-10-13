@@ -1,12 +1,18 @@
 package org.server;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
+import java.util.Set;
+
+/**
+ * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
+ * @author adhit2
+ */
 
 public class DBController {
 
@@ -64,7 +70,48 @@ public class DBController {
                 System.err.println(e);
             }
         }
-        return null;
+        throw new NullPointerException("User not found");
+    }
+
+    private String toJsonArrayParse(Set<String> set) {
+        return Arrays.toString(set.toArray()).substring(
+            1,
+            Arrays.toString(set.toArray()).length() - 1
+        );
+    }
+
+    /**
+     * Adds a user to the database.
+     * @param user the user to add
+     */
+    public void addUser(User user) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(dbPath);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(30);
+            String sql =
+                "insert into users (uuid, riot_id, discord_id, first_name, last_name, one_way_matched, two_way_matched) values (?, ?, ?, ?, ?, json_array(?), json_array(?))";
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, user.getIdentifier());
+            pstmt.setString(2, user.getRiotID());
+            pstmt.setString(3, user.getDiscordID());
+            pstmt.setString(4, user.getFirstName());
+            pstmt.setString(5, user.getLastName());
+            pstmt.setString(6, toJsonArrayParse(user.getOneWayMatched()));
+            pstmt.setString(7, toJsonArrayParse(user.getTwoWayMatched()));
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                System.err.println(e);
+            }
+        }
     }
 
     /**
