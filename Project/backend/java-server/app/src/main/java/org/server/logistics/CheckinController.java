@@ -1,4 +1,4 @@
-package org.server;
+package org.server.logistics;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
