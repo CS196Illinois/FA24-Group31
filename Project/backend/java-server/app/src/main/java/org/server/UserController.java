@@ -1,6 +1,7 @@
 package org.server;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import org.server.userops.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,10 @@ public class UserController {
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+=======
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+>>>>>>> 1c908c5 (added delete function, I'm only like 75% sure it works so test it pretty pls)
 import org.springframework.web.bind.annotation.RestController;
 import org.server.DBController;
 
@@ -79,7 +84,10 @@ import java.sql.*;
 @RestController
 public class UserController {
     private static final String DB_URL = "jdbc:sqlite:main.db";
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1c908c5 (added delete function, I'm only like 75% sure it works so test it pretty pls)
     DBController db = new DBController(DB_URL);
     @PostMapping("/api/v1/_delete_user_")
     public void deleteUser(@PathVariable String uuid) {
@@ -89,6 +97,7 @@ public class UserController {
             System.out.println("Deleted user: " + uuid);
         }
     }
+<<<<<<< HEAD
     @PostMapping("/api/v1/add_user")
     public void addUser(@PathVariable String uuid, @PathVariable String firstName, @PathVariable String lastName, @PathVariable String riotID, @PathVariable String discordID, @PathVariable String[] oneWayMatched, @PathVariable String[] twoWayMatched) {
         User user = new User(
@@ -104,4 +113,6 @@ public class UserController {
     }
 
 >>>>>>> 413c47f (removed random files and updated gitignore)
+=======
+>>>>>>> 1c908c5 (added delete function, I'm only like 75% sure it works so test it pretty pls)
 }
