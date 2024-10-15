@@ -18,6 +18,21 @@ Ranked by urgency:
 	- response: ??
 - **/api/v1/users/delete_user_{by_discord_id? or by_uuid?}**
 	- delete user from db
+	- we can use json_remove() to remove elements from json_array: https://www.sqlite.org/json1.html#jrm
+
+it would look something like this (edit all rows):
+
+UPDATE users
+SET one_way_matched = json_remove(one_way_matched, '$['asdlfkj-sadfjklas-asdlfkj-lsadfj']')
+WHERE 1=1;
+
+or something like this (edit rows that contain 'asdlfkj-sadfjklas-asdlfkj-lsadfj'):
+
+UPDATE users
+SET one_way_matched = json_remove(one_way_matched, '$['asdlfkj-sadfjklas-asdlfkj-lsadfj']')
+WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '$['asdlfkj-sadfjklas-asdlfkj-lsadfj'];
+
+double check my sql syntax but you get the logic behind it
 	- response: ??
 - **/api/v1/users/fetch_by_discord_id**
 	- fetch user info by discord_id
@@ -26,6 +41,7 @@ Ranked by urgency:
 	- fetch user info by uuid
 	- response: ??
 - **/api/v1/auth/check_if_discord_id_exist**
+    - input - the token of the discord redirect URL
     - check if discord id is already in db
     - response: {"exists": true, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"} or {"exists": false, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"}
         - redirect to account creation if response "exists": false
