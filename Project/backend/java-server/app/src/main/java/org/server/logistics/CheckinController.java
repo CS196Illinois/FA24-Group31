@@ -12,6 +12,7 @@ public class CheckinController {
 
     /**
      * Returns OK to make sure that the server is up.
+     * @return OK if the server is up and if the server is not up then nothing.
      */
     @GetMapping("/api/v1/check_in")
     public String check_in() {

@@ -1,5 +1,5 @@
 # Web Server
-
+Note - server runs on port 9320 - picked a different port so IllinoisNet firework doesn't block it.
 ## Tasks
 
 Ranked by urgency:
@@ -16,7 +16,7 @@ Ranked by urgency:
 - **/api/v1/users/create_user**
 	- create new user in db
 	- response: ??
-- **/api/v1/users/delete_user_{by_discord_id? or by_uuid?}**
+- **/api/v1/users/delete_user_{by_discord_id? or by_uuid?}** - we need some crazy algo to delete the user from the matched users column
 	- delete user from db
 	- response: ??
 - **/api/v1/users/fetch_by_discord_id**
@@ -26,6 +26,7 @@ Ranked by urgency:
 	- fetch user info by uuid
 	- response: ??
 - **/api/v1/auth/check_if_discord_id_exist**
+    - input: the token of the discord redirect
     - check if discord id is already in db
     - response: {"exists": true, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"} or {"exists": false, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"}
         - redirect to account creation if response "exists": false
