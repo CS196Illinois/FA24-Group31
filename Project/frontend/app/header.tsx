@@ -58,7 +58,7 @@ export function HeaderSimple() {
       <Container size="md" className={classes.inner}>
         <MantineProvider theme={theme}> 
             <Link href="/">
-                <Text size="xl" fw={600} variant="gradient" gradient={{from: 'red', to: 'blue', deg:90}}> Matched.gg </Text>
+                <Text size="xl" fw={600} variant="gradient" gradient={{from: 'red', to: 'blue', deg:90}}> Matched.lol </Text>
             </Link>
             <Group gap={5} visibleFrom="xs">
                 {items}
