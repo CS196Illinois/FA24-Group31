@@ -1,5 +1,6 @@
 package org.server;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -112,6 +113,27 @@ public class DBController {
                 System.err.println(e);
             }
         }
+    }
+
+    public boolean deleteUser(User user) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(dbPath);
+            Statement stmt = connection.createStatement();
+            String sq1 = "DELETE FROM users WHERE uuid = '" + user + "'";
+            stmt.executeQuery(sq1);
+            JOptionPane.showMessageDialog(null, "Deleted User");
+            String sq2 = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$['user']') WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '$['user']')";
+            stmt.executeQuery(sq2);
+            JOptionPane.showMessageDialog(null, "Deleted One Way Matched");
+            String sq3 = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$['user']') WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '$['user']')";
+            stmt.executeQuery(sq3);
+            JOptionPane.showMessageDialog(null, "Deleted Two Way Matched");
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**
