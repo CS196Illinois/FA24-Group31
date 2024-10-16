@@ -12,6 +12,8 @@ import { createTheme } from '@mantine/core';
 import { MantineProvider } from "@mantine/core";
 import Link from 'next/link';
 import { HeaderSimple } from "./header";
+import { OurMission } from "./ourmission";
+import { AboutUs } from "./aboutus";
 
 
 
@@ -51,7 +53,10 @@ export default function Home() {
             </Button>
             </Link>
           </Container>
+  
         </section>  
+        <OurMission/>
+        <AboutUs/>
       </div>
     </MantineProvider>
   );
