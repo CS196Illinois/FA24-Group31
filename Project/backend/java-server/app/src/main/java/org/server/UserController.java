@@ -3,12 +3,14 @@ package org.server;
 import org.server.userops.User;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
 
     private static final String DB_URL = "main.db";
+
     DBController db = new DBController(DB_URL);
 
     @PostMapping("/api/v1/_delete_user_")
