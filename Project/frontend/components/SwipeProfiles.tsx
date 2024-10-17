@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import ProfileCard from './ProfileCard'; // Import the ProfileCard component
 
 interface SwipeProfilesProps {
-  profiles: string[];  // Array of profiles to display
+  profiles: {
+    name: string;
+    image: string;
+    bio: string;
+  }[]; // Update the type for profiles
 }
 
 const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
@@ -14,22 +19,24 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
   const swipeLeft = useCallback(() => {
     if (currentIndex < profiles.length) {
       setSwipeDirection('left');
+      // Set a timeout to delay updating the currentIndex to allow for the animation to complete
       setTimeout(() => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
-      }, 300);
+      }, 300); // Match with CSS transition duration
     }
   }, [currentIndex, profiles.length]);
 
   const swipeRight = useCallback(() => {
     if (currentIndex < profiles.length) {
       setSwipeDirection('right');
+      // Set a timeout to delay updating the currentIndex to allow for the animation to complete
       setTimeout(() => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
-      }, 300);
+      }, 300); // Match with CSS transition duration
     }
   }, [currentIndex, profiles.length]);
 
@@ -97,27 +104,38 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
     <div className="relative w-80 h-96 flex flex-col items-center">
       <div className="flex-1 w-full relative flex items-center justify-center">
         {currentIndex < profiles.length ? (
-          profiles.map((profile, index) => (
-            <div
-              key={index}
-              className={`absolute w-64 h-80 bg-white rounded-lg shadow-lg flex justify-center items-center text-2xl transition-transform duration-500 ease-in-out ${
-                index === currentIndex
-                  ? swipeDirection === 'left'
-                    ? 'transform -translate-x-full'
-                    : swipeDirection === 'right'
-                    ? 'transform translate-x-full'
-                    : 'transform-none z-20'
-                  : 'transform scale-90 translate-y-2 z-10 opacity-50'
-              }`}
-              style={{
-                display: index >= currentIndex ? 'block' : 'none',
-                transform: `translateX(${index === currentIndex ? dragDistance : 0}px)`,
-              }}
-              onMouseDown={handleMouseDown}
-            >
-              {profile}
-            </div>
-          ))
+          profiles.map((profile, index) => {
+            // Calculate the transform for the current profile
+            const isCurrent = index === currentIndex;
+            const translateX =
+              isCurrent && dragDistance !== 0
+                ? dragDistance
+                : isCurrent && swipeDirection === 'left'
+                ? -400 // Adjust this value to fit your card width
+                : isCurrent && swipeDirection === 'right'
+                ? 400 // Adjust this value to fit your card width
+                : 0;
+
+            return (
+              <div
+                key={index}
+                className={`absolute w-500 h-80 bg-white rounded-lg shadow-lg flex justify-center items-center text-2xl transition-transform duration-300 ease-in-out`}
+                style={{
+                  transform: `translateX(${translateX}px)`,
+                  zIndex: isCurrent ? 20 : 10, // Higher z-index for the current card
+                  opacity: isCurrent ? 1 : 0.5, // Dim other cards
+                  display: isCurrent || index > currentIndex ? 'block' : 'none', // Keep previous cards in the DOM
+                }}
+                onMouseDown={handleMouseDown}
+              >
+          <ProfileCard
+            name={profile.name}
+            image={profile.image}
+            bio={profile.bio}
+          />
+              </div>
+            );
+          })
         ) : (
           <div className="w-64 h-80 flex justify-center items-center text-2xl text-gray-500">
             No more profiles to display.
