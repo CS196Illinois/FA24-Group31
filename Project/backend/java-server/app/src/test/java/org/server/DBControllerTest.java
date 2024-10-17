@@ -94,6 +94,22 @@ public class DBControllerTest {
         );
     }
 
+    @Test
+    void testDeleteUser() {
+        User user = new User(
+                "uuid4",
+                "V",
+                "R",
+                "riot1",
+                "discord1",
+                new String[] { "ssldfjlskdf", "sldkfjlskfjd" },
+                new String[] { "ssldfjlskdf", "sldkfjlskfjd" }
+        );
+        dbController.addUser(user);
+        dbController.deleteUser(user);
+        System.out.println(user.getIdentifier());
+    }
+
     @AfterAll
     static void tearDown() throws SQLException {
         try (
