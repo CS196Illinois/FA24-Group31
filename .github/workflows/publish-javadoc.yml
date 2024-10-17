@@ -2,7 +2,7 @@ name: Deploy Javadoc
 
 on:
   push:
-    branches-ignore:
+    branches:
       - master
     paths:
       - '**.java'
