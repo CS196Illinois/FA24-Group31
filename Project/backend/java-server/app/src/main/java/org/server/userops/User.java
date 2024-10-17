@@ -1,4 +1,4 @@
-package org.server;
+package org.server.userops;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

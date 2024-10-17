@@ -1,20 +1,33 @@
 package org.server.userops;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.server.DBController;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.aot.DisabledInAotMode;
+import org.springframework.test.web.servlet.MockMvc;
 
+@WebMvcTest(FetchController.class)
+@DisabledInAotMode
 public class FetchControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private DBController dbController;
 
     @InjectMocks
@@ -26,53 +39,100 @@ public class FetchControllerTest {
     }
 
     @Test
-    public void testFetchByUuid_UserExists() {}
-
-    @Test
-    public void testFetchByUuid_UserNotFound() {
-        String uuid = "non-existent-uuid";
-        when(dbController.getUser(uuid, false)).thenThrow(
-            new NullPointerException("User not found")
-        );
-
-        ResponseEntity<JsonObject> response = fetchController.fetch_by_uuid(
-            uuid
-        );
-
-        assertEquals(ResponseEntity.notFound().build(), response);
-        verify(dbController, times(1)).getUser(uuid, false);
-    }
-
-    @Test
-    public void testFetchByDiscordId_UserExists() {
-        String discordId = "test-discord-id";
+    public void testFetchByUuid_Success() throws Exception {
         JsonObject userJson = new JsonObject();
-        userJson.addProperty("discord_id", discordId);
-        userJson.addProperty("first_name", "Jane");
+        userJson.addProperty("uuid", "12345");
+        userJson.addProperty("first_name", "John");
         userJson.addProperty("last_name", "Doe");
+        userJson.addProperty("riot_id", "riot123");
+        userJson.addProperty("discord_id", "discord123");
+        JsonArray oneWayMatched = new JsonArray();
+        userJson.add("one_way_matched", oneWayMatched);
+        JsonArray twoWayMatched = new JsonArray();
+        userJson.add("two_way_matched", twoWayMatched);
 
-        User user = mock(User.class);
-        when(user.toJson()).thenReturn(userJson);
-        when(dbController.getUser(discordId, true)).thenReturn(user);
+        User user = new User(
+            "12345",
+            "John",
+            "Doe",
+            "riot123",
+            "discord123",
+            new String[] {},
+            new String[] {}
+        );
+        when(
+            dbController.getUser(anyString(), anyString().equals("false"))
+        ).thenReturn(user);
 
-        ResponseEntity<JsonObject> response =
-            fetchController.fetch_by_discordid(discordId);
-
-        assertEquals(ResponseEntity.ok(userJson), response);
-        verify(dbController, times(1)).getUser(discordId, true);
+        mockMvc
+            .perform(
+                get("/api/v1/fetch_by_uuid/12345").contentType(
+                    MediaType.APPLICATION_JSON
+                )
+            )
+            .andExpect(content().json(userJson.toString()));
+        System.out.println(userJson.toString());
     }
 
     @Test
-    public void testFetchByDiscordId_UserNotFound() {
-        String discordId = "non-existent-discord-id";
-        when(dbController.getUser(discordId, true)).thenThrow(
-            new NullPointerException("User not found")
+    public void testFetchByUuid_NotFound() throws Exception {
+        when(
+            dbController.getUser(anyString(), anyString().equals("false"))
+        ).thenThrow(new NullPointerException("User not found"));
+
+        mockMvc
+            .perform(
+                get("/api/v1/fetch_by_uuid/12345").contentType(
+                    MediaType.APPLICATION_JSON
+                )
+            )
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testFetchByDiscordId_Success() throws Exception {
+        JsonObject userJson = new JsonObject();
+        userJson.addProperty("uuid", "12345");
+        userJson.addProperty("first_name", "John");
+        userJson.addProperty("last_name", "Doe");
+        userJson.addProperty("riot_id", "riot123");
+        userJson.addProperty("discord_id", "discord123");
+
+        User user = new User(
+            "12345",
+            "John",
+            "Doe",
+            "riot123",
+            "discord123",
+            new String[] { "sdfhsd" },
+            new String[] { "sdsdklfsd" }
         );
+        when(
+            dbController.getUser(anyString(), anyString().equals("true"))
+        ).thenReturn(user);
 
-        ResponseEntity<JsonObject> response =
-            fetchController.fetch_by_discordid(discordId);
+        mockMvc
+            .perform(
+                get("/api/v1/fetch_by_discordid/discord123").contentType(
+                    MediaType.APPLICATION_JSON
+                )
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().json(userJson.toString()));
+    }
 
-        assertEquals(ResponseEntity.notFound().build(), response);
-        verify(dbController, times(1)).getUser(discordId, true);
+    @Test
+    public void testFetchByDiscordId_NotFound() throws Exception {
+        when(
+            dbController.getUser(anyString(), anyString().equals("true"))
+        ).thenThrow(new NullPointerException("User not found"));
+
+        mockMvc
+            .perform(
+                get("/api/v1/fetch_by_discordid/discord123").contentType(
+                    MediaType.APPLICATION_JSON
+                )
+            )
+            .andExpect(status().isNotFound());
     }
 }

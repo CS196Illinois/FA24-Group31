@@ -27,7 +27,7 @@ public class DBController {
      * @param dbPath the path to the database
      */
     public DBController(String dbPath) {
-        this.dbPath = dbPath;
+        this.dbPath = "jdbc:sqlite:" + dbPath;
     }
 
     /**

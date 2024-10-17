@@ -1,12 +1,11 @@
 package org.server.userops;
-import org.server.userops.User;
+
+import com.google.gson.JsonObject;
 import org.server.DBController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.google.gson.JsonObject;
 
 /**
  * This class contains the controller for the fetch_by_uuid and fetch_by_discordid routes which return the user object in JsonObject.
@@ -34,7 +33,7 @@ public class FetchController {
         DBController dbController = new DBController("main.db");
         try {
             return ResponseEntity.ok(
-                dbController.getUser(discordid, true).toJson().
+                dbController.getUser(discordid, true).toJson()
             );
         } catch (NullPointerException e) {
             return ResponseEntity.notFound().build();
