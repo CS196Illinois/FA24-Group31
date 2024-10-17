@@ -332,10 +332,11 @@ public class User {
 
             while (var3.hasNext()) {
                 user = (String) var3.next();
+                System.out.println(user);
                 twoWayMatchedArray.add(user);
             }
 
-            json.add("oneWayMatched", twoWayMatchedArray);
+            json.add("one_way_matched", twoWayMatchedArray);
         }
 
         if (this.twoWayMatched != null) {
@@ -344,12 +345,12 @@ public class User {
 
             while (var3.hasNext()) {
                 user = (String) var3.next();
+                System.out.println(user);
                 twoWayMatchedArray.add(user);
             }
 
-            json.add("twoWayMatched", twoWayMatchedArray);
+            json.add("two_way_matched", twoWayMatchedArray);
         }
-
         return json;
     }
 

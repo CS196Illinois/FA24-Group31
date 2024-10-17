@@ -75,11 +75,15 @@ public class DBController {
         throw new NullPointerException("User not found");
     }
 
-    private String toJsonArrayParse(Set<String> set) {
-        return Arrays.toString(set.toArray()).substring(
-            1,
-            Arrays.toString(set.toArray()).length() - 1
-        );
+    private String toJsonArray(Set<String> s) {
+        StringBuilder jsonArray = new StringBuilder("");
+        for (String element : s) {
+            jsonArray.append("'").append(element).append("', ");
+        }
+        if (jsonArray.length() > 1) {
+            jsonArray.setLength(jsonArray.length() - 2); // Remove the trailing comma and space
+        }
+        return jsonArray.toString();
     }
 
     /**
@@ -100,8 +104,8 @@ public class DBController {
             pstmt.setString(3, user.getDiscordID());
             pstmt.setString(4, user.getFirstName());
             pstmt.setString(5, user.getLastName());
-            pstmt.setString(6, toJsonArrayParse(user.getOneWayMatched()));
-            pstmt.setString(7, toJsonArrayParse(user.getTwoWayMatched()));
+            pstmt.setString(6, toJsonArray(user.getOneWayMatched()));
+            pstmt.setString(7, toJsonArray(user.getTwoWayMatched()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
