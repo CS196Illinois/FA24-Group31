@@ -3,6 +3,7 @@
 import React from 'react';
 import SwipeProfiles from '../../components/SwipeProfiles';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 const profilesData = [
@@ -25,6 +26,9 @@ const profilesData = [
 ];
 
 >>>>>>> 298c887 (added ProfileCard component)
+=======
+import classes from './style.module.css'; // Importing CSS file
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 
 const profilesData = [
   {
@@ -45,6 +49,7 @@ const profilesData = [
   // Add more profiles as needed
 ];
 
+<<<<<<< HEAD
 
 const profilesData = [
   {
@@ -65,10 +70,12 @@ const profilesData = [
   // Add more profiles as needed
 ];
 
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 const MatchingPage: React.FC = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold mb-8">Swipe Profiles</h1>
+    <div className={classes.homepageContainer}>
+      <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
       <SwipeProfiles profiles={profilesData} />
     </div>
   );

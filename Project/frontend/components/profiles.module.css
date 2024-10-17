@@ -2,6 +2,7 @@
 .profileCard {
 	width: 500px;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	height: 700px;
 	background-color: white;
 	text-align: left;
@@ -10,18 +11,27 @@
 	height: 320px;
 	background-color: white;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	height: 320px;
+	background-color: white;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	border-radius: 8px;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 	display: flex;
 	flex-direction: column;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	align-items: center;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	align-items: center;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	justify-content: center;
 }
 
 .profileCardImage {
+<<<<<<< HEAD
 <<<<<<< HEAD
 	width: 100%;
 	height: 100%;
@@ -30,29 +40,41 @@
 	align-items: center;
 	background-color: black;
 =======
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	width: 96px;
 	height: 96px;
 	border-radius: 50%;
 	margin-bottom: 8px;
+<<<<<<< HEAD
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
 
 .profileCardName {
 	font-size: 1.75rem;
 	font-weight: bold;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	text-align: left;
 =======
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
 
 .profileCardBio {
 	color: #4a5568;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	text-align: left;
 =======
 	text-align: center;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	text-align: center;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
 
 /* SwipeProfiles Container */
@@ -67,9 +89,13 @@
 
 .profileWrapper {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	flex: 1;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	flex: 1;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	width: 100%;
 	position: relative;
 	display: flex;
@@ -100,15 +126,20 @@
 	align-items: center;
 	font-size: 1.75rem;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	color: white;
 =======
 	color: #718096;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	color: #718096;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
 
 /* Button Styling */
 .buttonContainer {
 	position: fixed;
+<<<<<<< HEAD
 <<<<<<< HEAD
 	bottom: 20rem;
 	width: 100%;
@@ -117,6 +148,10 @@
 	bottom: 1rem;
 	width: 100%;
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+	bottom: 1rem;
+	width: 100%;
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	display: flex;
 	justify-content: space-around;
 }
@@ -125,6 +160,7 @@
 	padding: 0.5rem 1rem;
 	border-radius: 4px;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	font-size: 2rem;
 	color: white;
 }
@@ -132,6 +168,8 @@
 .swipeButtonLeft:hover, .swipeButtonRight:hover  {
 	color: rgb(209, 209, 209);
 =======
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 	font-size: 1rem;
 	color: white;
 }
@@ -142,5 +180,8 @@
 
 .swipeButtonRight {
 	background-color: #48bb78;
+<<<<<<< HEAD
 >>>>>>> 8007fd0 (replaced tailwind css with separated css files)
+=======
+>>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
