@@ -1,5 +1,6 @@
 package org.server;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -84,7 +85,7 @@ public class DBController {
      * Adds a user to the database.
      * @param user the user to add
      */
-    public void addUser(User user) {
+    public boolean addUser(User user) {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(dbPath);
@@ -103,6 +104,7 @@ public class DBController {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            return false;
         } finally {
             try {
                 if (connection != null) {
@@ -110,8 +112,30 @@ public class DBController {
                 }
             } catch (SQLException e) {
                 System.err.println(e);
+                return false;
             }
         }
+        return true;
+    }
+
+    public boolean deleteUser(User user) {
+        Connection connection = null;
+        try {
+            connection = DriverManager.getConnection(dbPath);
+            Statement stmt = connection.createStatement();
+            String deleteUser = "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
+            stmt.executeUpdate(deleteUser);
+            String deleteOneWayMatches = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" + user.getIdentifier() + "]') " +
+                    "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            stmt.executeUpdate(deleteOneWayMatches);
+            String deleteTwoWayMatches = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" + user.getIdentifier() + "]') " +
+                    "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            stmt.executeUpdate(deleteTwoWayMatches);
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     /**

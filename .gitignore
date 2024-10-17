@@ -1,5 +1,6 @@
-.DS_Store
-Project/.env
+**/.DS_Store
+**/.env
+**/.idea
 Project/backend/java-server/.gradle
 Project/backend/java-server/app/build
 Project/backend/java-server/app/bin
