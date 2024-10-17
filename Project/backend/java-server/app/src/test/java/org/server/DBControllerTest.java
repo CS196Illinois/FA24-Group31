@@ -36,6 +36,8 @@ public class DBControllerTest {
         assertEquals("Doe", retrievedUser.getLastName());
         assertEquals("riot123", retrievedUser.getRiotID());
         assertEquals("discord123", retrievedUser.getDiscordID());
+        assertEquals(user.getOneWayMatched(), retrievedUser.getOneWayMatched());
+        assertEquals(user.getTwoWayMatched(), retrievedUser.getTwoWayMatched());
     }
 
     @Test
@@ -58,6 +60,8 @@ public class DBControllerTest {
         assertEquals("Doe", retrievedUser.getLastName());
         assertEquals("riot456", retrievedUser.getRiotID());
         assertEquals("discord456", retrievedUser.getDiscordID());
+        assertEquals(user.getOneWayMatched(), retrievedUser.getOneWayMatched());
+        assertEquals(user.getTwoWayMatched(), retrievedUser.getTwoWayMatched());
     }
 
     @Test
