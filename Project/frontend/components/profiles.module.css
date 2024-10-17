@@ -1,0 +1,97 @@
+/* ProfileCard Styling */
+.profileCard {
+	width: 500px;
+	height: 320px;
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.profileCardImage {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	margin-bottom: 8px;
+}
+
+.profileCardName {
+	font-size: 1.75rem;
+	font-weight: bold;
+}
+
+.profileCardBio {
+	color: #4a5568;
+	text-align: center;
+}
+
+/* SwipeProfiles Container */
+.profilesContainer {
+	position: relative;
+	width: 320px;
+	height: 384px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.profileWrapper {
+	flex: 1;
+	width: 100%;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.swipeCard {
+	position: absolute;
+	width: 500px;
+	height: 320px;
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.75rem;
+	transition: transform 0.3s ease-in-out;
+	z-index: 20;
+}
+
+.noMoreProfiles {
+	width: 256px;
+	height: 320px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.75rem;
+	color: #718096;
+}
+
+/* Button Styling */
+.buttonContainer {
+	position: fixed;
+	bottom: 1rem;
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.swipeButtonLeft, .swipeButtonRight {
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
+	font-size: 1rem;
+	color: white;
+}
+
+.swipeButtonLeft {
+	background-color: #4299e1;
+}
+
+.swipeButtonRight {
+	background-color: #48bb78;
+}

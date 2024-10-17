@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProfileCard from './ProfileCard'; // Import the ProfileCard component
+import classes from './profiles.module.css'
 
 interface SwipeProfilesProps {
   profiles: {
@@ -101,8 +102,8 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
   }, [swipeLeft, swipeRight]);
 
   return (
-    <div className="relative w-80 h-96 flex flex-col items-center">
-      <div className="flex-1 w-full relative flex items-center justify-center">
+    <div className={classes.profilesContainer}>
+      <div className={classes.profileWrapper}>
         {currentIndex < profiles.length ? (
           profiles.map((profile, index) => {
             // Calculate the transform for the current profile
@@ -119,7 +120,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
             return (
               <div
                 key={index}
-                className={`absolute w-500 h-80 bg-white rounded-lg shadow-lg flex justify-center items-center text-2xl transition-transform duration-300 ease-in-out`}
+                className={classes.swipeCard}
                 style={{
                   transform: `translateX(${translateX}px)`,
                   zIndex: isCurrent ? 20 : 10, // Higher z-index for the current card
@@ -137,7 +138,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
             );
           })
         ) : (
-          <div className="w-64 h-80 flex justify-center items-center text-2xl text-gray-500">
+          <div className={classes.noMoreProfiles}>
             No more profiles to display.
           </div>
         )}
@@ -145,16 +146,16 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
 
       {/* Button Container Positioned at the Bottom */}
       {currentIndex < profiles.length && (
-        <div className="fixed bottom-4 flex w-full justify-around">
+        <div className={classes.buttonContainer}>
           <button
             onClick={swipeLeft}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            className={classes.swipeButtonLeft}
           >
             Swipe Left
           </button>
           <button
             onClick={swipeRight}
-            className="px-4 py-2 bg-green-500 text-white rounded-md"
+            className={classes.swipeButtonRight}
           >
             Swipe Right
           </button>
