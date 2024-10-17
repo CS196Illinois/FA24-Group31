@@ -1,6 +1,10 @@
 package org.server;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
 This class contains the information of a {@link User} object. One user is a row in the database, and contains the following fields:
@@ -305,6 +309,48 @@ public class User {
             return twoWayMatched.contains(user);
         }
         return false;
+    }
+
+    /**
+     * Converts the user to a JsonObject.
+     *
+     * @return the JsonObject
+     */
+    public JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("uuid", this.identifier);
+        json.addProperty("first_name", this.firstName);
+        json.addProperty("last_name", this.lastName);
+        json.addProperty("riot_id", this.riotID);
+        json.addProperty("discord_id", this.discordID);
+        JsonArray twoWayMatchedArray;
+        Iterator<String> var3; //this is some weird for each loop stuff, i accidentally deleted the initial version of this method and i had to decompile the .class file to get it back and this is what it gave me.
+        String user;
+        if (this.oneWayMatched != null) {
+            twoWayMatchedArray = new JsonArray();
+            var3 = this.oneWayMatched.iterator();
+
+            while (var3.hasNext()) {
+                user = (String) var3.next();
+                twoWayMatchedArray.add(user);
+            }
+
+            json.add("oneWayMatched", twoWayMatchedArray);
+        }
+
+        if (this.twoWayMatched != null) {
+            twoWayMatchedArray = new JsonArray();
+            var3 = this.twoWayMatched.iterator();
+
+            while (var3.hasNext()) {
+                user = (String) var3.next();
+                twoWayMatchedArray.add(user);
+            }
+
+            json.add("twoWayMatched", twoWayMatchedArray);
+        }
+
+        return json;
     }
 
     /**

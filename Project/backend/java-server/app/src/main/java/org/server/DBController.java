@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Set;
+import org.server.userops.User;
 
 /**
  * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
