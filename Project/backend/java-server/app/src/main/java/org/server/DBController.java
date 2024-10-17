@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Set;
+import org.server.userops.User;
 
 /**
  * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
@@ -26,7 +27,7 @@ public class DBController {
      * @param dbPath the path to the database
      */
     public DBController(String dbPath) {
-        this.dbPath = dbPath;
+        this.dbPath = "jdbc:sqlite:" + dbPath;
     }
 
     /**

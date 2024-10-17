@@ -1,4 +1,4 @@
-package org.server;
+package org.server.userops;
 
 import static org.junit.jupiter.api.Assertions.*;
 
