@@ -4,13 +4,13 @@
 
 Ranked by urgency:
 
-- [ ] Setup web server (can't do shit without the web server being up yet)
+- [x] Setup web server (can't do shit without the web server being up yet)
 - [ ] Setup out account creation
-- [ ] figure out login/secret token logic
+- [x] figure out login/secret token logic
 
 ## Routes
 
-- **/api/v1/check_in**
+- **/api/v1/check_in** -- DONE - adhi
 	- have front end check in at an interval to make sure it is still connected to the backend
 	- response: "OK" with status code 200 on success
 - **/api/v1/users/create_user**
@@ -18,6 +18,21 @@ Ranked by urgency:
 	- response: ??
 - **/api/v1/users/delete_user_{by_discord_id? or by_uuid?}**
 	- delete user from db
+	- we can use json_remove() to remove elements from json_array: https://www.sqlite.org/json1.html#jrm
+
+it would look something like this (edit all rows):
+
+UPDATE users
+SET one_way_matched = json_remove(one_way_matched, '$['asdlfkj-sadfjklas-asdlfkj-lsadfj']')
+WHERE 1=1;
+
+or something like this (edit rows that contain 'asdlfkj-sadfjklas-asdlfkj-lsadfj'):
+
+UPDATE users
+SET one_way_matched = json_remove(one_way_matched, '$['asdlfkj-sadfjklas-asdlfkj-lsadfj']')
+WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '$['asdlfkj-sadfjklas-asdlfkj-lsadfj'];
+
+double check my sql syntax but you get the logic behind it
 	- response: ??
 - **/api/v1/users/fetch_by_discord_id**
 	- fetch user info by discord_id
@@ -26,6 +41,7 @@ Ranked by urgency:
 	- fetch user info by uuid
 	- response: ??
 - **/api/v1/auth/check_if_discord_id_exist**
+    - input - the token of the discord redirect URL
     - check if discord id is already in db
     - response: {"exists": true, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"} or {"exists": false, "token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG"}
         - redirect to account creation if response "exists": false
@@ -58,10 +74,6 @@ one_way_matched: json_array
 
 two_way_matched: json_array
 
-auth_token: String
-
-refresh_token: String
-
-| uuid | riot_id | discord_id | first_name | last_name | one_way_matched | two_way_matched | auth_token | refresh_token |
+| uuid | riot_id | discord_id | first_name | last_name | one_way_matched | two_way_matched |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| "ca6db7a0-5755-45d2-a994-4d0a3614cfa3" | "0xSec#6969" | "yzk5" | "Raymond" | "Yang" | ["2ad9303f-4cea-43fe-bac4-e1fcec783a6b", "bf82051f-f586-41ea-ad55-d1968e21ba24", "f299ed0f-0c92-4ce3-bcc7-82a3f6c94924"] | ["9ddf2a72-59ee-4892-adfd-cd675a1eb4d6", "989a43f7-b6d4-41f9-8662-04b16c182c7b"] | "6qrZcUqja7812RVdnEKjpzOL4CvHBFG" | "D43f5y0ahjqew82jZ4NViEr2YafMKhue" |
+| "ca6db7a0-5755-45d2-a994-4d0a3614cfa3" | "0xSec#6969" | "yzk5" | "Raymond" | "Yang" | ["2ad9303f-4cea-43fe-bac4-e1fcec783a6b", "bf82051f-f586-41ea-ad55-d1968e21ba24", "f299ed0f-0c92-4ce3-bcc7-82a3f6c94924"] | ["9ddf2a72-59ee-4892-adfd-cd675a1eb4d6", "989a43f7-b6d4-41f9-8662-04b16c182c7b"] |

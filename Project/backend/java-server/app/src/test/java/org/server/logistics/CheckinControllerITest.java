@@ -1,4 +1,4 @@
-package org.server;
+package org.server.logistics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

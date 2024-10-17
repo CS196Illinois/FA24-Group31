@@ -1,4 +1,4 @@
-package org.server;
+package org.server.logistics;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
