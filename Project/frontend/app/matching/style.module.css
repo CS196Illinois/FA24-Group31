@@ -1,5 +1,7 @@
 /* General Styling for the Matching Page */
+
 .homepageContainer {
+  background: linear-gradient(to bottom, rgba(73, 141, 224, 0.874), rgba(170, 63, 118, 0.4)); /* Blue fade effect */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +10,13 @@
 }
   
 .homepageTitle {
+  color: white;
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 2rem;
 }
+/*  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header
+padding: 20px; Optional: Adds padding inside the section
+display: flex;
+flex-direction: column;
+justify-content: center; Center content vertically if desired */

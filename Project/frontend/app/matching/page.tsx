@@ -26,8 +26,8 @@ const profilesData = [
 const MatchingPage: React.FC = () => {
   return (
     <div className={classes.homepageContainer}>
-      <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
-      <SwipeProfiles profiles={profilesData} />
+        <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
+        <SwipeProfiles profiles={profilesData} />
     </div>
   );
 };
