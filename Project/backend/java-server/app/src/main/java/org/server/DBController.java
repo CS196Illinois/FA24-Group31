@@ -1,6 +1,5 @@
 package org.server;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Set;
+import javax.swing.*;
 import org.server.userops.User;
 
 /**
@@ -121,7 +121,6 @@ public class DBController {
             }
         }
         return true;
-<<<<<<< HEAD
     }
 
     public boolean deleteUser(User user) {
@@ -129,56 +128,24 @@ public class DBController {
         try {
             connection = DriverManager.getConnection(dbPath);
             Statement stmt = connection.createStatement();
-            String deleteUser = "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
+            String deleteUser =
+                "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
             stmt.executeUpdate(deleteUser);
-            String deleteOneWayMatches = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            String deleteOneWayMatches =
+                "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" +
+                user.getIdentifier() +
+                "]') " +
+                "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" +
+                user.getIdentifier() +
+                "')";
             stmt.executeUpdate(deleteOneWayMatches);
-            String deleteTwoWayMatches = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" + user.getIdentifier() + "')";
-            stmt.executeUpdate(deleteTwoWayMatches);
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
-    public boolean deleteUser(User user) {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(dbPath);
-            Statement stmt = connection.createStatement();
-            String sq1 = "DELETE FROM users WHERE uuid = '" + user + "'";
-            stmt.executeQuery(sq1);
-            JOptionPane.showMessageDialog(null, "Deleted User");
-            String sq2 = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$['user']') WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '$['user']')";
-            stmt.executeQuery(sq2);
-            JOptionPane.showMessageDialog(null, "Deleted One Way Matched");
-            String sq3 = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$['user']') WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '$['user']')";
-            stmt.executeQuery(sq3);
-            JOptionPane.showMessageDialog(null, "Deleted Two Way Matched");
-        } catch (SQLException e) {
-            System.err.println(e.getMessage());
-            return false;
-        }
-        return true;
-=======
->>>>>>> f33f529 (Added add user and delete user route, but delete user function may not work)
-    }
-
-    public boolean deleteUser(User user) {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(dbPath);
-            Statement stmt = connection.createStatement();
-            String deleteUser = "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
-            stmt.executeUpdate(deleteUser);
-            String deleteOneWayMatches = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" + user.getIdentifier() + "')";
-            stmt.executeUpdate(deleteOneWayMatches);
-            String deleteTwoWayMatches = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            String deleteTwoWayMatches =
+                "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" +
+                user.getIdentifier() +
+                "]') " +
+                "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" +
+                user.getIdentifier() +
+                "')";
             stmt.executeUpdate(deleteTwoWayMatches);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
