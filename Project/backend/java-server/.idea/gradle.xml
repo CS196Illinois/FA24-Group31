@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+<<<<<<< HEAD
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../Gradle/gradle-8.10.2" />
+        <option name="gradleJvm" value="23" />
+=======
+        <option name="gradleJvm" value="#JAVA_HOME" />
+>>>>>>> d8271fc (temp changes do NOT merge)
+=======
+        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../Gradle/gradle-8.10.2" />
+        <option name="gradleJvm" value="23" />
+>>>>>>> 57f5a3a (added back riot api calls)
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
