@@ -18,11 +18,13 @@ public class UserController {
         boolean deleted = db.deleteUser(user);
         if (deleted) {
             Object response = new Object() {
+                @SuppressWarnings("unused")
                 public final String status = "{\"status\": \"deleted\"}";
             };
             return ResponseEntity.ok(response);
         } else {
             Object response = new Object() {
+                @SuppressWarnings("unused")
                 public final String status = "{\"status\": \"failed\"}";
             };
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
