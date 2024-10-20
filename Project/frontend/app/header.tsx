@@ -20,7 +20,7 @@ import Link from 'next/link';
     sm: '0.75rem',
     md: '1rem',
     lg: '1.25rem',
-    xl: '1.9rem', // Adjust this value to your desired size
+    xl: '1.9rem', 
     xxl: '2.5rem'
   },
 });
@@ -29,7 +29,7 @@ import Link from 'next/link';
 
 // Temporary links for now, potential pages for later 
 const links = [
-  { link: '/about', label: 'Our Mission  ' },
+  { link: '#our-mission', label: 'Our Mission  ' },
   { link: '/pricing', label: 'About Us  ' },
   { link: '/learn', label: 'Community  ' },
 ];
