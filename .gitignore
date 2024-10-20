@@ -8,3 +8,4 @@ Project/backend/java-server/app/.project
 Project/backend/java-server/.settings/
 **/out/
 Project/backend/java-server/app/.classpath/
+**/node_modules/
