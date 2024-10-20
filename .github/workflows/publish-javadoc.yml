@@ -30,3 +30,5 @@ jobs:
         with:
           commit_message: Auto generated Javadocs by Actions
           branch: ${{ steps.extract_branch.outputs.branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADMIN_PAT }}
