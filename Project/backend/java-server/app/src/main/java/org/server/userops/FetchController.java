@@ -3,6 +3,7 @@ package org.server.userops;
 import com.google.gson.JsonObject;
 import org.server.DBController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FetchController {
 
+    @Async
     @GetMapping(path = "/api/v1/fetch_by_uuid/{uuid}")
     public ResponseEntity<JsonObject> fetch_by_uuid(@PathVariable String uuid) {
         DBController dbController = new DBController("main.db");
@@ -26,6 +28,7 @@ public class FetchController {
         }
     }
 
+    @Async
     @GetMapping(path = "/api/v1/fetch_by_discordid/{discordid}")
     public ResponseEntity<JsonObject> fetch_by_discordid(
         @PathVariable String discordid
