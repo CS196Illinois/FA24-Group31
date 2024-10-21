@@ -4,10 +4,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.*;
 import org.junit.jupiter.api.*;
+import org.server.userops.User;
 
 public class DBControllerTest {
 
-    private static final String DB_URL = "jdbc:sqlite:main.db";
+    private static final String DB_URL = "main.db";
     private DBController dbController;
 
     @BeforeEach
@@ -35,6 +36,8 @@ public class DBControllerTest {
         assertEquals("Doe", retrievedUser.getLastName());
         assertEquals("riot123", retrievedUser.getRiotID());
         assertEquals("discord123", retrievedUser.getDiscordID());
+        assertEquals(user.getOneWayMatched(), retrievedUser.getOneWayMatched());
+        assertEquals(user.getTwoWayMatched(), retrievedUser.getTwoWayMatched());
     }
 
     @Test
@@ -57,6 +60,8 @@ public class DBControllerTest {
         assertEquals("Doe", retrievedUser.getLastName());
         assertEquals("riot456", retrievedUser.getRiotID());
         assertEquals("discord456", retrievedUser.getDiscordID());
+        assertEquals(user.getOneWayMatched(), retrievedUser.getOneWayMatched());
+        assertEquals(user.getTwoWayMatched(), retrievedUser.getTwoWayMatched());
     }
 
     @Test
@@ -93,9 +98,29 @@ public class DBControllerTest {
         );
     }
 
+    @Test
+    void testDeleteUser() {
+        User user = new User(
+                "uuid4",
+                "V",
+                "R",
+                "riot1",
+                "discord1",
+                new String[] { "ssldfjlskdf", "sldkfjlskfjd" },
+                new String[] { "ssldfjlskdf", "sldkfjlskfjd" }
+        );
+        dbController.addUser(user);
+        dbController.deleteUser(user);
+        System.out.println(user.getIdentifier());
+    }
+
     @AfterAll
     static void tearDown() throws SQLException {
-        try (Connection connection = DriverManager.getConnection(DB_URL)) {
+        try (
+            Connection connection = DriverManager.getConnection(
+                "jdbc:sqlite:" + DB_URL
+            )
+        ) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(
                 "DELETE FROM users where discord_id like 'discord%'"
