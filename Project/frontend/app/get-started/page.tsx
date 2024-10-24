@@ -1,4 +1,6 @@
 // Get started page
+// Will contain a button to login with discord
+
 import React from 'react';
 import { Container, Button, Text } from '@mantine/core';
 import { HeaderSimple } from "../header";
