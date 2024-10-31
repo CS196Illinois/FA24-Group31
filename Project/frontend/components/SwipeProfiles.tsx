@@ -151,13 +151,13 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
             onClick={swipeLeft}
             className={classes.swipeButtonLeft}
           >
-            Swipe Left
+            ←
           </button>
           <button
             onClick={swipeRight}
             className={classes.swipeButtonRight}
           >
-            Swipe Right
+            →
           </button>
         </div>
       )}
