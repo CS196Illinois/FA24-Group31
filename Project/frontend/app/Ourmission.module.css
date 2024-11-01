@@ -1,0 +1,8 @@
+.section {
+    padding-top: 50px;
+    padding-left: 100px;
+    padding-right: 100px;
+    min-height: calc(100vh); /* Make the section cover the full viewport height minus the header */
+    display: flex;
+    flex-direction: column;
+}

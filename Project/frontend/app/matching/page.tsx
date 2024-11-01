@@ -1,8 +1,9 @@
 "use client";
 
 import React from 'react';
-import SwipeProfiles from '../../components/SwipeProfiles';
+import SwipeProfiles from './components/SwipeProfiles';
 import classes from './style.module.css'; // Importing CSS file
+import { HeaderSimple } from '../header';
 
 const profilesData = [
   {
@@ -25,8 +26,13 @@ const profilesData = [
 
 const MatchingPage: React.FC = () => {
   return (
-    <div className={classes.homepageContainer}>
-        <SwipeProfiles profiles={profilesData} />
+    <div>
+      <HeaderSimple/>
+    
+      <div className={classes.homepageContainer}>
+          <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
+          <SwipeProfiles profiles={profilesData} />
+      </div>
     </div>
   );
 };

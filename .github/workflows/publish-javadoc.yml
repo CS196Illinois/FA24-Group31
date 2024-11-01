@@ -4,19 +4,31 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**.java'
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # if you have a protection rule on your repository, you'll need to give write permission to the workflow.
     steps:
-      - name: Deploy JavaDoc
-        uses: MathieuSoysal/Javadoc-publisher.yml@v2.5.0
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cache apt packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          javadoc-branch: javadoc
-          java-version: 17
-          target-folder: javadoc
-          project: gradle
-          custom-command: cd Project/backend/java-server/app && javadoc -d javadoc -sourcepath src/main/java -subpackages org.server
+          packages: openjdk-21-jdk-headless
+          version: 1.0
+      - name: Generate Javadoc
+        shell: bash
+        run: cd Project/backend/java-server/app && javadoc -d ../../javadoc -sourcepath src/main/java -subpackages org.server -Xdoclint:none --ignore-source-errors
+      - name: Get branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Auto generated Javadocs by Actions
+          branch: ${{ steps.extract_branch.outputs.branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADMIN_PAT }}
