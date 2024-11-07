@@ -1,47 +1,12 @@
 /* General Styling for the Matching Page */
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 .homepageContainer {
   background: linear-gradient(to bottom, rgba(73, 141, 224, 0.874), rgba(170, 63, 118, 0.4)); /* Blue fade effect */
-=======
-.homepageContainer {
->>>>>>> 8007fd0 (replaced tailwind css with separated css files)
-=======
-.homepageContainer {
->>>>>>> 57276c2 (replaced tailwind css with separated css files)
-=======
-
-.homepageContainer {
-  background: linear-gradient(to bottom, rgba(73, 141, 224, 0.874), rgba(170, 63, 118, 0.4)); /* Blue fade effect */
->>>>>>> 5a705be (minor UI changes)
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-<<<<<<< HEAD
-<<<<<<< HEAD
-  position: relative; /* Allows absolutely positioned children */
-}
-
-.homepageTitle {
-  color: white;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  position: absolute; /* Positions the title absolutely within the container */
-  top: 20px; /* Adjusts the top position of the title */
-}
-/*  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header
-padding: 20px; Optional: Adds padding inside the section
-display: flex;
-flex-direction: column;
-justify-content: center; Center content vertically if desired */
-=======
-=======
->>>>>>> 57276c2 (replaced tailwind css with separated css files)
 }
   
 .homepageTitle {
@@ -49,18 +14,9 @@ justify-content: center; Center content vertically if desired */
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 2rem;
-<<<<<<< HEAD
-<<<<<<< HEAD
-}
->>>>>>> 8007fd0 (replaced tailwind css with separated css files)
-=======
-}
->>>>>>> 57276c2 (replaced tailwind css with separated css files)
-=======
 }
 /*  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header
 padding: 20px; Optional: Adds padding inside the section
 display: flex;
 flex-direction: column;
 justify-content: center; Center content vertically if desired */
->>>>>>> 5a705be (minor UI changes)
