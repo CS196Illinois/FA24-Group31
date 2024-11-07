@@ -65,4 +65,21 @@ public class UserController {
             );
         }
     }
+
+    @GetMapping("api/v1/generate_token")
+    public ResponseEntity<Object> generateToken() {
+        String alphaNumString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+        int index;
+        StringBuilder token = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            index = (int)(alphaNumString.length() * Math.random());
+            token.append(alphaNumString.charAt(index));
+        }
+        Object response = new Object() {
+            public final String userToken = token.toString();
+        };
+        return ResponseEntity.ok(response);
+    }
 }
