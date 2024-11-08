@@ -14,6 +14,7 @@ class _MatchingPageState extends State<MatchingPage> {
       imageUrl: 'https://via.placeholder.com/100',
       rank: 'Diamond',
       championsPlayed: 'Ezreal, Lux, Zed',
+      hasLikedCurrentUser: false,  // Add this field
     ),
     UserProfile(
       name: 'Jane Smith',
@@ -22,12 +23,73 @@ class _MatchingPageState extends State<MatchingPage> {
       imageUrl: 'https://via.placeholder.com/100',
       rank: 'Platinum',
       championsPlayed: 'Ahri, Yasuo, Lee Sin',
+      hasLikedCurrentUser: true,  // This user has already liked the current user
     ),
-    // Add more profiles here
   ];
 
-  // Track expanded state for each profile
   Map<String, bool> expandedState = {};
+  Map<String, bool> likedByCurrentUser = {};
+
+  void _showMatchDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('It\'s a Match! 🎮'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.favorite,
+                color: Colors.red,
+                size: 50,
+              ),
+              SizedBox(height: 16),
+              Text('You both liked each other!'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text('Start Chatting'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Add chat functionality here
+              },
+            ),
+            TextButton(
+              child: Text('Keep Browsing'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _handleSwipe(UserProfile profile, DismissDirection direction) {
+    if (direction == DismissDirection.endToStart) {
+      // Swiped left - Dislike
+      setState(() {
+        likedByCurrentUser[profile.name] = false;
+        profiles.remove(profile);
+      });
+    } else if (direction == DismissDirection.startToEnd) {
+      // Swiped right - Like
+      setState(() {
+        likedByCurrentUser[profile.name] = true;
+
+        // Only show match if other user has already liked current user
+        if (profile.hasLikedCurrentUser) {
+          Future.delayed(Duration(milliseconds: 0), () {
+            _showMatchDialog();
+          });
+        }
+        profiles.remove(profile);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,36 +102,53 @@ class _MatchingPageState extends State<MatchingPage> {
             ? Stack(
           alignment: Alignment.center,
           children: profiles.map((profile) {
-            // Initialize expanded state if not already done
             expandedState.putIfAbsent(profile.name, () => false);
+            likedByCurrentUser.putIfAbsent(profile.name, () => false);
 
             return Dismissible(
               key: ValueKey(profile.name),
               direction: DismissDirection.horizontal,
-              onDismissed: (direction) {
-                setState(() {
-                  // Remove the swiped profile from the list
-                  profiles.remove(profile);
-                });
-              },
+              onDismissed: (direction) => _handleSwipe(profile, direction),
               background: Container(
-                color: Colors.red,
+                color: Colors.green,
                 alignment: Alignment.centerLeft,
-                child: Icon(Icons.clear, color: Colors.white),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.favorite, color: Colors.white, size: 30),
+                      Text(
+                        'LIKE',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               secondaryBackground: Container(
-                color: Colors.green,
+                color: Colors.red,
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.check, color: Colors.white),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.close, color: Colors.white, size: 30),
+                      Text(
+                        'NOPE',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               child: GestureDetector(
                 onVerticalDragUpdate: (details) {
                   setState(() {
                     if (details.delta.dy < -10) {
-                      // Swipe up to expand
                       expandedState[profile.name] = true;
                     } else if (details.delta.dy > 10) {
-                      // Swipe down to collapse
                       expandedState[profile.name] = false;
                     }
                   });
@@ -107,7 +186,6 @@ class _MatchingPageState extends State<MatchingPage> {
                             ),
                           ),
                           SizedBox(height: 8.0),
-                          // Animated section for "Rank" and "Champions Played"
                           AnimatedContainer(
                             duration: Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
@@ -119,7 +197,8 @@ class _MatchingPageState extends State<MatchingPage> {
                                 Text(
                                   'Rank: ${profile.rank}',
                                   style: TextStyle(
-                                    fontSize: 16.0, color: Colors.grey[700],
+                                    fontSize: 16.0,
+                                    color: Colors.grey[700],
                                   ),
                                 ),
                                 SizedBox(height: 8.0),
@@ -143,7 +222,26 @@ class _MatchingPageState extends State<MatchingPage> {
             );
           }).toList(),
         )
-            : Text('No more profiles'),
+            : Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.sentiment_satisfied,
+                size: 60,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'No more profiles',
+                style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -156,6 +254,7 @@ class UserProfile {
   final String imageUrl;
   final String rank;
   final String championsPlayed;
+  final bool hasLikedCurrentUser;  // Add this field
 
   UserProfile({
     required this.name,
@@ -164,5 +263,6 @@ class UserProfile {
     required this.imageUrl,
     required this.rank,
     required this.championsPlayed,
+    this.hasLikedCurrentUser = false,  // Default to false
   });
 }
