@@ -1,14 +1,13 @@
 package org.server;
 
-import javax.swing.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.Set;
+import org.server.userops.User;
 
 /**
  * This class is responsible for controlling the database. It can get a user, add a user, update a user, and delete a user.
@@ -27,7 +26,7 @@ public class DBController {
      * @param dbPath the path to the database
      */
     public DBController(String dbPath) {
-        this.dbPath = dbPath;
+        this.dbPath = "jdbc:sqlite:" + dbPath;
     }
 
     /**
@@ -74,11 +73,15 @@ public class DBController {
         throw new NullPointerException("User not found");
     }
 
-    private String toJsonArrayParse(Set<String> set) {
-        return Arrays.toString(set.toArray()).substring(
-            1,
-            Arrays.toString(set.toArray()).length() - 1
-        );
+    private String toJsonArray(Set<String> s) {
+        StringBuilder jsonArray = new StringBuilder("");
+        for (String element : s) {
+            jsonArray.append("'").append(element).append("', ");
+        }
+        if (jsonArray.length() > 1) {
+            jsonArray.setLength(jsonArray.length() - 2); // Remove the trailing comma and space
+        }
+        return jsonArray.toString();
     }
 
     /**
@@ -99,8 +102,8 @@ public class DBController {
             pstmt.setString(3, user.getDiscordID());
             pstmt.setString(4, user.getFirstName());
             pstmt.setString(5, user.getLastName());
-            pstmt.setString(6, toJsonArrayParse(user.getOneWayMatched()));
-            pstmt.setString(7, toJsonArrayParse(user.getTwoWayMatched()));
+            pstmt.setString(6, toJsonArray(user.getOneWayMatched()));
+            pstmt.setString(7, toJsonArray(user.getTwoWayMatched()));
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
@@ -123,13 +126,24 @@ public class DBController {
         try {
             connection = DriverManager.getConnection(dbPath);
             Statement stmt = connection.createStatement();
-            String deleteUser = "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
+            String deleteUser =
+                "DELETE FROM users WHERE uuid = '" + user.getIdentifier() + "'";
             stmt.executeUpdate(deleteUser);
-            String deleteOneWayMatches = "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            String deleteOneWayMatches =
+                "UPDATE users SET one_way_matched = json_remove(one_way_matched, '$[" +
+                user.getIdentifier() +
+                "]') " +
+                "WHERE EXISTS (SELECT 1 FROM json_each(one_way_matched) WHERE value = '" +
+                user.getIdentifier() +
+                "')";
             stmt.executeUpdate(deleteOneWayMatches);
-            String deleteTwoWayMatches = "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" + user.getIdentifier() + "]') " +
-                    "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" + user.getIdentifier() + "')";
+            String deleteTwoWayMatches =
+                "UPDATE users SET two_way_matched = json_remove(two_way_matched, '$[" +
+                user.getIdentifier() +
+                "]') " +
+                "WHERE EXISTS (SELECT 1 FROM json_each(two_way_matched) WHERE value = '" +
+                user.getIdentifier() +
+                "')";
             stmt.executeUpdate(deleteTwoWayMatches);
         } catch (SQLException e) {
             System.err.println(e.getMessage());

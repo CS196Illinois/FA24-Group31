@@ -1,8 +1,35 @@
-**/.DS_Store
+# Should probably have .gitignore in each major directory but oh well
+
+# Sensitive files
 **/.env
-**/.idea
-Project/backend/java-server/.gradle
-Project/backend/java-server/app/build
-Project/backend/java-server/app/bin
-Project/backend/java-server/app/.project
-Project/backend/java-server/.settings
+
+# IDE
+**/.idea/
+**/.vscode/
+**/out/
+
+# Java
+**/.gradle/
+**/build/
+**/.project
+**/.settings/
+**/bin/
+**/.classpath/
+**/.jar
+**/.gradletasknamecache
+!**/gradle-wrapper.jar
+
+# JS
+**/node_modules/
+**/logs/
+**/jspm_packages/
+**/.npm/
+**/.next/
+**/.node_repl_history
+**/.next-env.d.ts
+
+# Misc
+**/.DS_Store
+**/.log
+**/.pid
+**/.seed

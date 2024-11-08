@@ -1,5 +1,6 @@
 package org.server.logistics;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,6 +16,7 @@ public class CheckinController {
      * @return the String "OK" if the server is up, the API
      * doesn't work if the server is down for obvious reasons.
      */
+    @Async
     @GetMapping("/api/v1/check_in")
     public String check_in() {
         return "OK";

@@ -21,8 +21,8 @@ const GetStarted = () => {
         <Text size="xl">Welcome to the Get Started Page!</Text>
         <Text size="md">This is a blank page for new users.</Text>
 
-        {/* Dicsord Login Link*/}
-        <Button component={Link} href="/get-started" className={classes.loginButton} mt="xl" justify="center"> Login with Discord </Button>
+        {/* Dicsord Login Link INSERT HERE*/}
+        {/* <Button component={Link} className={classes.loginButton} mt="xl" justify="center"> Login with Discord </Button> */}
         
         {/* Add any other login methods below if needed...*/}
       </Container>

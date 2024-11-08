@@ -1,13 +1,17 @@
 /* CSS File for global header*/
 
 .header {
-  height: 60px;
+  height: 65px;
+  width: 100%;
   margin-bottom: 0; /* Remove margin to connect the header and section */
-  margin-top: 10px;
+  padding-top: 5px;
   background-color: var(--mantine-color-body); /* Keep header background as is */
   border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-  display: flex;
+  display: flex; 
   justify-content: center; /* Ensures the title bar is centered horizontally */
+  position: fixed;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+
 }
 
 .inner {
@@ -59,7 +63,7 @@
 /* Background code (should be moved onto a seperate file) */
 .section {
   background: linear-gradient(to bottom, rgba(73, 141, 224, 0.874), rgba(170, 63, 118, 0.4)); /* Blue fade effect */
-  min-height: calc(100vh - 56px); /* Make the section cover the full viewport height minus the header */
+  min-height: calc(100vh); /* Make the section cover the full viewport height minus the header */
   padding: 20px; /* Optional: Adds padding inside the section */
   display: flex;
   flex-direction: column;
