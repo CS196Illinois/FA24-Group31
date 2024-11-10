@@ -59,7 +59,9 @@ for i in range(0, int(sys.argv[4].strip())):
         '{random.choice(pronouns)}',
         '{description}',
         json_array({roleOptions}),
-        '{random.choice(rank)}'
+        '{random.choice(rank)}',
+        '{random.choice(rank)}',
+        '{riotID}'
     );
     """
     print(f"\nQuery executed: \n{query}\n")

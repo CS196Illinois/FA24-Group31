@@ -1,4 +1,3 @@
-
 # Web Server
 
 ## Tasks
@@ -59,17 +58,26 @@ double check my sql syntax but you get the logic behind it
 > [!TIP]
 > If you accidentally corrupt the database while testing, do `cp main.db.bak main.db'
 
-## Users
+## private
 
 discord_id: String (primary key)
 
-riot_id: String
+dob: Int
+
+one_way_matched: json_array
+
+two_way_matched: json_array
+
+| discord_id | dob | one_way_matched | two_way_matched |
+|:-:|:-:|:-:|:-:|
+
+# public
+
+discord_id: String (primary key)
 
 first_name: String
 
 last_name: String
-
-dob: Int
 
 pronouns: String
 
@@ -79,12 +87,10 @@ roles: json
 
 rank: String
 
-one_way_matched: json_array
+riot_id: String
 
-two_way_matched: json_array
-
-| discord_id | riot_id | first_name | last_name | dob | pronouns | description | roles | rank | one_way_matched | two_way_matched |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| "QFg60eu" | "fkC526x1JHbM6OwKQN#wUS0x" | "Bill" | "Washington" | 936346028 | "she/them" | "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " | ["top","jungle","middle"] | "challenger" | ["HFdGu6jD","u9VU4lDMovmVwvz","wGGPS6wjWTEuBp2ew","q5gb0FAdmTBblDv"] | ["6axZbpvS4U46C","BMNa2ge","NTNJ","mUoAouaLHCLbf"] |
-| "klTak" | "KhqklOumkW37d#UEkT" | "George" | "Smith" | 710284578 | "she/her" | "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " | ["top","jungle","middle","bottom","suppport"] | "grandmaster" | ["AVydpE","IGxJg","hY5t1wq","BHDy9t5N5HEjU3l","mEyfQCYeE5","b03Ru9nTDpw8X","Ky7t3ZqIVn7DsOj","vTbt3HjYd5MEe6gDo","gNUyjFmUG8qwlBffy","C2htWCUKg8HwQm"] | ["k2KxALyVW","kFAgcCkIgb19Lv","h3klsMrmGxNnybzuL0","cgBgbo","2WkX9iKeEtEiwdlo","dAJjxakt","bvHFIcYvjsvJ","2ZF8","mJZ","C9GPQCdHnD74YweL"]
-"vPzGvjwjeBi78szQ" | "1W8v5h#No6j" | "George" | "Adams"| 629376025 | "she/her" | "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " | ["bottom"] | "emerald" | ["z3EbRB8TAt1CE3I6","ts6y8","ySt","bWOc1x0","5mSgx8V","RqWPG7fLmOM"] | ["MYQNd1noE","U161z0sQwqD","azwbYuFP8sH","M5V83xsrQGn","XK1MtUIWQfCEa1W","JHHx"]
+| discord_id | first_name | last_name | pronouns | description | roles | rank | riot_id |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+"ILLYpQKhuY3v" | "John" | "Washington" | "any/any" | "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " | ["top","jungle","middle","bottom","suppport"] | platinum |
+mHZhK8TGIIfI|Bea|White|she/her|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle","bottom","suppport"]|bronze|
+vi048PUuSftDY4kU|Mary|White|any/any|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle"]|silver|
