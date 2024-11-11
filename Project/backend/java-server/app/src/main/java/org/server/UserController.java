@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("api/v1/generate_token")
-    public ResponseEntity<Object> generateToken() {
+    public ResponseEntity<String> generateToken() {
         String alphaNumString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 + "0123456789"
                 + "abcdefghijklmnopqrstuvxyz";
@@ -77,9 +77,9 @@ public class UserController {
             index = (int)(alphaNumString.length() * Math.random());
             token.append(alphaNumString.charAt(index));
         }
-        Object response = new Object() {
-            public final String userToken = token.toString();
-        };
-        return ResponseEntity.ok(response);
+//        Object response = new Object() {
+//            public final String userToken = token.toString();
+//        };
+        return ResponseEntity.ok("{\"token\": \"" + token.toString() + "\"}");
     }
 }
