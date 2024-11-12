@@ -1,0 +1,19 @@
+.container {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background: linear-gradient(
+		to bottom,
+		rgba(73, 141, 224, 0.874),
+		/* Start color */ rgba(170, 63, 118, 0.4) /* End color */
+	); /* Same gradient as main page */
+	padding: 80px 20px; /* Adjust padding as needed */
+}
+
+/* Additional styles for the admin container */
+.inner {
+	width: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 20px;
+}
