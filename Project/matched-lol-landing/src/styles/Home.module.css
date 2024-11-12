@@ -1,196 +1,313 @@
-.page {
-	--gray-rgb: 0, 0, 0;
-	--gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-	--gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
-	--button-primary-hover: #383838;
-	--button-secondary-hover: #f2f2f2;
-
-	display: grid;
-	grid-template-rows: 20px 1fr 20px;
-	align-items: center;
-	justify-items: center;
-	min-height: 100svh;
-	padding: 80px;
-	gap: 64px;
-	font-family: var(--font-geist-sans);
-}
-
-@media (prefers-color-scheme: dark) {
-	.page {
-		--gray-rgb: 255, 255, 255;
-		--gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-		--gray-alpha-100: rgba(var(--gray-rgb), 0.06);
-
-		--button-primary-hover: #ccc;
-		--button-secondary-hover: #1a1a1a;
-	}
-}
-
-.main {
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-	grid-row-start: 2;
-}
-
-.main ol {
-	font-family: var(--font-geist-mono);
-	padding-left: 0;
-	margin: 0;
-	font-size: 14px;
-	line-height: 24px;
-	letter-spacing: -0.01em;
-	list-style-position: inside;
-}
-
-.main li:not(:last-of-type) {
-	margin-bottom: 8px;
-}
-
-.main code {
-	font-family: inherit;
-	background: var(--gray-alpha-100);
-	padding: 2px 4px;
-	border-radius: 4px;
-	font-weight: 600;
-}
-
-.ctas {
-	display: flex;
-	gap: 16px;
-}
-
-.ctas a {
-	appearance: none;
-	border-radius: 128px;
-	height: 48px;
-	padding: 0 20px;
-	border: none;
-	border: 1px solid transparent;
-	transition:
-		background 0.2s,
-		color 0.2s,
-		border-color 0.2s;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 16px;
-	line-height: 20px;
-	font-weight: 500;
-}
-
-a.primary {
-	background: var(--foreground);
-	color: var(--background);
-	gap: 8px;
-}
-
-a.secondary {
-	border-color: var(--gray-alpha-200);
-	min-width: 180px;
-}
-
-.footer {
-	grid-row-start: 3;
-	display: flex;
-	gap: 24px;
-}
-
-.footer a {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.footer img {
-	flex-shrink: 0;
-}
-
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-	a.primary:hover {
-		background: var(--button-primary-hover);
-		border-color: transparent;
-	}
-
-	a.secondary:hover {
-		background: var(--button-secondary-hover);
-		border-color: transparent;
-	}
-
-	.footer a:hover {
-		text-decoration: underline;
-		text-underline-offset: 4px;
-	}
-}
-
-@media (max-width: 600px) {
-	.page {
-		padding: 32px;
-		padding-bottom: 80px;
-	}
-
-	.main {
-		align-items: center;
-	}
-
-	.main ol {
-		text-align: center;
-	}
-
-	.ctas {
-		flex-direction: column;
-	}
-
-	.ctas a {
-		font-size: 14px;
-		height: 40px;
-		padding: 0 16px;
-	}
-
-	a.secondary {
-		min-width: auto;
-	}
-
-	.footer {
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: center;
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	.logo {
-		filter: invert();
-	}
-}
-/* styles/Home.module.css */
-
-.section {
-	padding-top: 100px; /* Adjust for fixed header if needed */
-	padding-left: 20px;
-	padding-right: 20px;
+.wrapper {
 	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
 	background: linear-gradient(
 		to bottom,
 		rgba(73, 141, 224, 0.874),
-		/* Start color */ rgba(170, 63, 118, 0.4) /* End color */
-	); /* Updated gradient */
-	justify-content: center;
+		rgba(170, 63, 118, 0.4)
+	);
+	display: flex;
 	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.container {
+	width: 100%;
+	max-width: 800px;
 }
 
 .content {
 	text-align: center;
+	animation: fadeIn 1s ease-in;
 }
 
-@media (min-width: 768px) {
-	.section {
-		padding-left: 100px;
-		padding-right: 100px;
+.logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 2rem;
+}
+
+.logoText {
+	font-size: 2.5rem;
+	font-weight: 700;
+	color: #fff;
+	margin-left: 1rem;
+}
+
+.title {
+	font-size: 3.5rem;
+	font-weight: 800;
+	color: #fff;
+	margin-bottom: 1.5rem;
+	background: linear-gradient(45deg, #fff, #f8f9fa);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
+
+.description {
+	font-size: 1.25rem;
+	color: #fff;
+	margin-bottom: 2rem;
+	line-height: 1.6;
+}
+
+.form {
+	display: flex;
+	gap: 1rem;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.input {
+	flex: 1;
+}
+.adminLink {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 100;
+	text-decoration: none;
+}
+
+.adminButton {
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	border-radius: 25px;
+	padding: 10px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+	backdrop-filter: blur(5px);
+	transform: translateY(0);
+}
+
+.adminButtonContent {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: white;
+	position: relative;
+	z-index: 2;
+	transition: all 0.3s ease;
+}
+
+.adminText {
+	font-size: 14px;
+	font-weight: 600;
+	opacity: 0.8;
+	transition: all 0.3s ease;
+	text-shadow: none;
+}
+
+.adminButton svg {
+	color: white;
+	transition: all 0.3s ease;
+	filter: drop-shadow(0 0 0 white);
+}
+
+.adminButton::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(
+		45deg,
+		#ff0000,
+		#ff8000,
+		#ffff00,
+		#00ff00,
+		#00ffff,
+		#0000ff,
+		#8000ff,
+		#ff0080
+	);
+	background-size: 400% 400%;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: 1;
+}
+
+/* Updated hover states for better text visibility */
+.adminButton:hover {
+	transform: translateY(-10px);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.adminButton:hover .adminText {
+	opacity: 1;
+	text-shadow:
+		0 0 10px rgba(255, 255, 255, 0.5),
+		0 0 20px rgba(255, 255, 255, 0.3);
+	letter-spacing: 0.5px;
+	color: black;
+	font-weight: 700;
+}
+
+.adminButton:hover svg {
+	filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+	transform: scale(1.1);
+}
+
+.adminButton:hover::before {
+	opacity: 1;
+	animation: rainbow 5s linear infinite;
+}
+
+.adminButton:hover .adminButtonContent {
+	transform: scale(1.05);
+}
+
+@keyframes rainbow {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+/* Make sure the button works well on mobile */
+@media (max-width: 768px) {
+	.adminButton {
+		padding: 8px 16px;
+	}
+
+	.adminText {
+		font-size: 12px;
+	}
+}
+.input input {
+	font-family: "Comfortaa", sans-serif !important;
+	font-size: 1rem;
+	padding: 0.75rem 1rem;
+	border-radius: 4px;
+}
+
+.input input::placeholder {
+	font-family: "Comfortaa", sans-serif;
+	opacity: 0.7;
+}
+.logoIcon {
+	color: white;
+	animation: pulse 2s infinite;
+}
+
+.logotext {
+	color: white;
+	font-size: 3rem;
+	font-weight: 700;
+	margin-left: 1rem;
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+.button {
+	background: linear-gradient(
+		to right,
+		rgba(53, 121, 204, 0.95),
+		/* Darker blue */ rgba(150, 43, 98, 0.95) /* Darker purple */
+	);
+	color: white;
+	border: none;
+	transition: all 0.3s ease;
+	font-weight: 600;
+	position: relative;
+	overflow: hidden;
+}
+
+.button:hover {
+	transform: translateY(-2px);
+	background: linear-gradient(
+		to right,
+		rgba(43, 101, 174, 0.95),
+		/* Even darker blue */ rgba(130, 23, 78, 0.95) /* Even darker purple */
+	);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.button:active {
+	transform: translateY(0px);
+}
+
+/* Optional: Add a subtle shine effect on hover */
+.button::after {
+	content: "";
+	position: absolute;
+	top: -50%;
+	left: -50%;
+	width: 200%;
+	height: 200%;
+	background: linear-gradient(
+		to bottom right,
+		rgba(255, 255, 255, 0) 0%,
+		rgba(255, 255, 255, 0.1) 50%,
+		rgba(255, 255, 255, 0) 100%
+	);
+	transform: rotate(45deg);
+	transition: all 0.3s ease;
+	opacity: 0;
+}
+
+.button:hover::after {
+	opacity: 1;
+	transform: rotate(45deg) translate(50%, 50%);
+}
+.notification {
+	margin-top: 1rem;
+	background: #48bb78;
+	color: white;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 768px) {
+	.title {
+		font-size: 2.5rem;
+	}
+
+	.description {
+		font-size: 1.1rem;
+	}
+
+	.form {
+		flex-direction: column;
+		padding: 0 20px;
+	}
+
+	.button {
+		width: 100%;
+	}
+
+	.logoText {
+		font-size: 2rem;
 	}
 }

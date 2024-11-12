@@ -1,107 +1,121 @@
-// pages/index.tsx
-
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import {
 	Container,
 	Button,
 	Text,
 	TextInput,
-	Box,
 	Notification,
 } from "@mantine/core";
+import {
+	IconHeart,
+	IconMail,
+	IconCheck,
+	IconX,
+	IconLock,
+} from "@tabler/icons-react";
+import styles from "../styles/Home.module.css";
+import Link from "next/link";
 
-import classes from "../styles/Home.module.css";
-import { HeaderSimple } from "../components/HeaderSimple";
-import axios from "axios";
-
-const Home: React.FC = () => {
+const Landing = () => {
 	const [email, setEmail] = useState("");
-	const [notification, setNotification] = useState<{
-		type: "success" | "error";
-		message: string;
-	} | null>(null);
+	const [submitted, setSubmitted] = useState(false);
+	const [notification, setNotification] = useState({ message: "", type: "" });
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-
 		try {
-			const response = await axios.post("/api/subscribe", { email });
-			if (response.status === 200) {
-				setNotification({
-					type: "success",
-					message: "Thank you for signing up!",
-				});
-				setEmail("");
-			} else if (response.status == 400) {
-				setNotification({
-					type: "error",
-					message: "You've already signed up.",
-				});
+			const response = await fetch("/api/subscribe", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email }),
+			});
+			const data = await response.json();
+			if (response.ok) {
+				setNotification({ message: data.message, type: "success" });
 			} else {
-				setNotification({
-					type: "error",
-					message: "Something went wrong. Please try again.",
-				});
+				setNotification({ message: data.message, type: "error" });
 			}
-		} catch (error: unknown) {
-			const errorMessage =
-				error instanceof Error
-					? error.message
-					: "Something went wrong. Please try again.";
-
+		} catch (error) {
 			setNotification({
+				message: "An error occurred. Please try again.",
 				type: "error",
-				message: errorMessage,
 			});
 		}
+		setSubmitted(true);
+		setEmail("");
+		setTimeout(() => setSubmitted(false), 3000);
 	};
 
 	return (
-		<div>
-			<section className={classes.section} id="hero">
-				<Container className={classes.content}>
-					{/* Hero text */}
-					<Text size="xxl" fw={700} c="white" ta="center">
-						Coming Soon
-					</Text>
-					<Text size="md" fw={500} c="white" ta="center" mt="sm">
-						We&apos;re working hard to bring you the best dating experience.
+		<div className={styles.wrapper}>
+			<Container size="xl" className={styles.container}>
+				<div className={styles.content}>
+					<div className={styles.logo}>
+						<IconHeart size={48} stroke={1.5} className={styles.logoIcon} />
+						<Text className={styles.logotext}>matched.lol</Text>
+					</div>
+
+					<Text className={styles.title}>
+						Coming Soon! Sign up for updates.
 					</Text>
 
-					{/* Sign-Up Form */}
-					<Box
-						component="form"
-						onSubmit={handleSubmit}
-						mt="xl"
-						style={{ width: "100%", maxWidth: 400, margin: "0 auto" }}
-					>
+					<Text className={styles.description}>
+						From your favorite CS124H group, get ready for matched.lol, the
+						ultimate platform to find your perfect League of Legends match!
+					</Text>
+
+					<form onSubmit={handleSubmit} className={styles.form}>
 						<TextInput
-							placeholder="Enter your email"
-							required
+							placeholder="enter your email"
 							value={email}
 							onChange={(e) => setEmail(e.currentTarget.value)}
-							mb="sm"
+							className={styles.input}
+							type="email"
+							styles={{
+								input: {
+									fontFamily: "Comfortaa, sans-serif",
+									"&::placeholder": {
+										fontFamily: "Comfortaa, sans-serif",
+									},
+								},
+							}}
 						/>
-						<Button type="submit" fullWidth>
-							Sign Up for Updates
+						<Button type="submit" className={styles.button}>
+							sign up for updates
 						</Button>
-					</Box>
+					</form>
 
-					{/* Notification */}
-					{notification && (
+					{submitted && (
 						<Notification
-							title={notification.type === "success" ? "Success" : "Error"}
-							color={notification.type}
-							onClose={() => setNotification(null)}
-							mt="md"
+							className={styles.notification}
+							icon={
+								notification.type === "success" ? (
+									<IconCheck size={18} />
+								) : (
+									<IconX size={18} />
+								)
+							}
+							color={notification.type === "success" ? "green" : "red"}
+							onClose={() => setSubmitted(false)}
 						>
 							{notification.message}
 						</Notification>
 					)}
-				</Container>
-			</section>
+				</div>
+
+				<Link href="/admin" className={styles.adminLink}>
+					<button className={styles.adminButton}>
+						<span className={styles.adminButtonContent}>
+							<IconLock size={18} />
+							<span className={styles.adminText}>Admin Dashboard Log In</span>
+						</span>
+					</button>
+				</Link>
+			</Container>
 		</div>
 	);
 };
 
-export default Home;
+export default Landing;

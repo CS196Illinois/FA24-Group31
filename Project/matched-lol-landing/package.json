@@ -21,6 +21,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@arungovil/sanitize-js": "^0.1.0",
     "@emotion/react": "^11.13.3",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.13.0",
@@ -28,8 +29,10 @@
     "@mantine/form": "^7.13.5",
     "@mantine/hooks": "^7.13.5",
     "@prisma/client": "^5.22.0",
+    "@tabler/icons-react": "^3.21.0",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "lucide-react": "^0.456.0",
     "mongoose": "^8.8.1",
     "next": "^13.4.13",
     "next-auth": "^4.24.10",

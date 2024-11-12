@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
+import sanitize from "@arungovil/sanitize-js";
 
 const prisma = new PrismaClient();
 
@@ -12,8 +13,8 @@ export default async function handler(
 	res: NextApiResponse<Data>,
 ) {
 	if (req.method === "POST") {
-		const { email } = req.body;
-
+		var { email } = req.body;
+		email = sanitize(email);
 		// Basic email validation
 		if (!email || !/\S+@\S+\.\S+/.test(email)) {
 			res.status(400).json({ message: "Invalid email address." });
