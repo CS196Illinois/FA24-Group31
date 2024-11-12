@@ -3,29 +3,33 @@
 	width: 500px;
 	height: 700px;
 	background-color: white;
+	text-align: left;
+	padding: 20px;
 	border-radius: 8px;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	justify-content: center;
 }
 
 .profileCardImage {
-	width: 96px;
-	height: 96px;
-	border-radius: 50%;
+	width: 100%;
+	height: 100%;
+	border-radius: 8px;
 	margin-bottom: 8px;
+	align-items: center;
+	background-color: black;
 }
 
 .profileCardName {
 	font-size: 1.75rem;
 	font-weight: bold;
+	text-align: left;
 }
 
 .profileCardBio {
 	color: #4a5568;
-	text-align: center;
+	text-align: left;
 }
 
 /* SwipeProfiles Container */
@@ -39,7 +43,6 @@
 }
 
 .profileWrapper {
-	flex: 1;
 	width: 100%;
 	position: relative;
 	display: flex;
@@ -69,14 +72,15 @@
 	justify-content: center;
 	align-items: center;
 	font-size: 1.75rem;
-	color: #718096;
+	color: white;
 }
 
 /* Button Styling */
 .buttonContainer {
 	position: fixed;
-	bottom: 1rem;
+	bottom: 20rem;
 	width: 100%;
+	height: 25%;
 	display: flex;
 	justify-content: space-around;
 }
@@ -84,14 +88,10 @@
 .swipeButtonLeft, .swipeButtonRight {
 	padding: 0.5rem 1rem;
 	border-radius: 4px;
-	font-size: 1rem;
+	font-size: 2rem;
 	color: white;
 }
 
-.swipeButtonLeft {
-	background-color: #4299e1;
-}
-
-.swipeButtonRight {
-	background-color: #48bb78;
+.swipeButtonLeft:hover, .swipeButtonRight:hover  {
+	color: rgb(209, 209, 209);
 }
