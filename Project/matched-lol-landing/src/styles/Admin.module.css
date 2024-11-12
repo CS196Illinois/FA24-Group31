@@ -122,6 +122,31 @@
 	transform: translateY(-2px);
 }
 
+.notification {
+	background: rgba(225, 55, 55, 0.15);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(225, 55, 55, 0.3);
+	color: white;
+	width: 100%;
+	max-width: 400px;
+	margin-bottom: 20px;
+	animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.notification[data-with-icon] {
+	padding-left: 10px;
+}
 @media (max-width: 768px) {
 	.githubButton {
 		font-size: 1rem;

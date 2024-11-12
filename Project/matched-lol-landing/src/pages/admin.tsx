@@ -9,15 +9,18 @@ import {
 	Center,
 	Stack,
 	Group,
+	Notification,
 } from "@mantine/core";
 import {
 	IconHeart,
 	IconLogout,
 	IconBrandGithub,
 	IconHome,
-	IconCheck,
 	IconCopy,
+	IconCheck,
+	IconX,
 } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 import classes from "../styles/Admin.module.css";
 import Link from "next/link";
 
@@ -31,7 +34,8 @@ const Admin = () => {
 	const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [copySuccess, setCopySuccess] = useState(false);
-
+	const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
 	const copyEmails = () => {
 		const emailList = subscribers.map((sub) => sub.email).join(",");
 		navigator.clipboard.writeText(emailList).then(() => {
@@ -39,12 +43,42 @@ const Admin = () => {
 			setTimeout(() => setCopySuccess(false), 2000); // Reset after 2 seconds
 		});
 	};
+	useEffect(() => {
+		// Handle error from URL
+		const errorType = router.query.error as string;
+		if (errorType) {
+			handleAuthError(errorType);
+			// Remove error from URL without full page reload
+			router.replace("/admin", undefined, { shallow: true });
+		}
+	}, [router.query.error]);
 
 	useEffect(() => {
 		if (status === "authenticated") {
 			fetchSubscribers();
 		}
 	}, [status]);
+	const handleAuthError = async (errorType: string) => {
+		let errorMessage = "";
+
+		switch (errorType) {
+			case "AccessDenied":
+				errorMessage =
+					"You are not authorized to access this page. Please try with a different account.";
+				break;
+			case "AuthenticationFailed":
+				errorMessage = "Login failed. Please try again.";
+				break;
+			default:
+				errorMessage =
+					"An error occurred during authentication. Please try again.";
+		}
+
+		setError(errorMessage);
+		signOut({ redirect: false });
+
+		clearGitHubSession();
+	};
 
 	const fetchSubscribers = async () => {
 		try {
@@ -57,7 +91,42 @@ const Admin = () => {
 			setLoading(false);
 		}
 	};
+	const clearGitHubSession = () => {
+		// Clear GitHub OAuth state from localStorage
+		localStorage.removeItem("github-oauth-state");
 
+		// Clear all session storage
+		sessionStorage.clear();
+
+		// Clear specific cookies
+		document.cookie.split(";").forEach((c) => {
+			document.cookie = c
+				.replace(/^ +/, "")
+				.replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+		});
+	};
+
+	const handleSignIn = async () => {
+		setError(null);
+		// Clear any existing sessions before starting new sign in
+		await signOut({ redirect: false });
+		clearGitHubSession();
+
+		// Small delay to ensure cleanup is complete
+		setTimeout(() => {
+			signIn("github", { callbackUrl: "/admin" });
+		}, 100);
+	};
+
+	if (status === "loading") {
+		return (
+			<div className={classes.wrapper}>
+				<Center style={{ height: "100vh" }}>
+					<Loader size="lg" color="white" />
+				</Center>
+			</div>
+		);
+	}
 	const HomeButton = () => (
 		<Link href="/" className={classes.linkReset}>
 			<Button
@@ -69,24 +138,24 @@ const Admin = () => {
 		</Link>
 	);
 
-	if (status === "loading") {
-		return (
-			<div className={classes.wrapper}>
-				<Center style={{ height: "100vh" }}>
-					<Loader size="lg" color="white" />
-				</Center>
-			</div>
-		);
-	}
-
 	if (!session) {
 		return (
 			<div className={classes.wrapper}>
 				<Center style={{ height: "100vh" }}>
 					<Stack align="center" gap="md">
+						{error && (
+							<Notification
+								icon={<IconX size="1.1rem" />}
+								color="red"
+								className={classes.notification}
+								onClose={() => setError(null)}
+							>
+								{error}
+							</Notification>
+						)}
 						<Button
 							leftSection={<IconBrandGithub size={20} />}
-							onClick={() => signIn("github")}
+							onClick={handleSignIn}
 							className={classes.githubButton}
 							styles={{
 								root: {
@@ -171,6 +240,22 @@ const Admin = () => {
 
 export async function getServerSideProps(context: any) {
 	const session = await getSession(context);
+
+	if (session) {
+		const allowedUsernames =
+			process.env.ALLOWED_GITHUB_USERNAMES?.split(",") || [];
+		// Use the GitHub username from the profile
+		const githubUsername = session.user?.name; // or wherever GitHub username is stored
+
+		if (!allowedUsernames.includes(githubUsername as string)) {
+			// If user is not authorized, return error
+			return {
+				props: {
+					error: "AccessDenied",
+				},
+			};
+		}
+	}
 
 	return {
 		props: {
