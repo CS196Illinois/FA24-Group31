@@ -1,0 +1,206 @@
+/* styles/Admin.module.css */
+.wrapper {
+	min-height: 100vh;
+	background: linear-gradient(
+		to bottom,
+		rgba(73, 141, 224, 0.874),
+		rgba(170, 63, 118, 0.4)
+	);
+	padding: 40px 20px;
+}
+
+.container {
+	width: 100%;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 40px;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.logoIcon {
+	color: white;
+	animation: pulse 2s infinite;
+}
+
+.logoText {
+	color: white;
+	font-size: 2rem;
+	font-weight: 700;
+}
+
+.content {
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	border-radius: 15px;
+	padding: 30px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.title {
+	color: white;
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.tableWrapper {
+	overflow-x: auto;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.table th {
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	font-weight: 600;
+	padding: 15px 20px;
+	text-align: left;
+}
+
+.table td {
+	color: white;
+	padding: 12px 20px;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table tr:hover td {
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.signOutButton {
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	transition: all 0.3s ease;
+}
+
+.signOutButton:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: translateY(-2px);
+}
+
+.buttonText {
+	display: inline-block;
+	padding: 0 4px; /* Add some padding around the text */
+}
+
+.githubButton {
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	font-size: 1.1rem;
+	transition: all 0.3s ease;
+	backdrop-filter: blur(10px);
+	line-height: 1.5;
+	min-height: 52px;
+	width: auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.githubButton:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: translateY(-2px);
+}
+
+.notification {
+	background: rgba(225, 55, 55, 0.15);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(225, 55, 55, 0.3);
+	color: white;
+	width: 100%;
+	max-width: 400px;
+	margin-bottom: 20px;
+	animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateY(-20px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.notification[data-with-icon] {
+	padding-left: 10px;
+}
+@media (max-width: 768px) {
+	.githubButton {
+		font-size: 1rem;
+		min-height: 48px;
+	}
+}
+/* Ensure proper spacing between icon and text */
+.githubButton [class*="button-inner"] {
+	gap: 10px;
+}
+
+@media (max-width: 768px) {
+	.githubButton {
+		font-size: 1rem;
+		padding: 10px 20px;
+		min-height: 44px;
+	}
+}
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@media (max-width: 768px) {
+	.wrapper {
+		padding: 20px 10px;
+	}
+
+	.header {
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.logoText {
+		font-size: 1.5rem;
+	}
+
+	.content {
+		padding: 20px 15px;
+	}
+
+	.title {
+		font-size: 1.2rem;
+	}
+
+	.table th,
+	.table td {
+		padding: 10px 15px;
+	}
+}
