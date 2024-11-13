@@ -11,11 +11,11 @@ export default NextAuth({
 	],
 	secret: process.env.NEXTAUTH_SECRET,
 	callbacks: {
-		async signIn({ user, account, profile }) {
+		async signIn({ profile }) {
 			const allowedUsernames =
 				process.env.ALLOWED_GITHUB_USERNAMES?.split(",") || [];
 
-			if (allowedUsernames.includes(profile?.login as string)) {
+			if (allowedUsernames.includes(profile?.name as string)) {
 				return true;
 			}
 
