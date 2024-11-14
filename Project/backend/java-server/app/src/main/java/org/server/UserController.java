@@ -4,13 +4,19 @@ import org.server.userops.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.google.gson.Gson;
 
 @RestController
 public class UserController {
 
     private static final String DB_URL = "jdbc:sqlite:main.db";
+    private final Gson gson;
 
     DBController db = new DBController(DB_URL);
+
+    public UserController(Gson gson) {
+        this.gson = gson;
+    }
 
     @PostMapping("/api/v1/_delete_user_/{uuid}")
     public ResponseEntity<Object> deleteUser(@PathVariable String uuid) {
@@ -64,5 +70,20 @@ public class UserController {
                 response
             );
         }
+    }
+
+    @GetMapping("api/v1/generate_token")
+    public ResponseEntity<String> generateToken() {
+        String alphaNumString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+        int index;
+        StringBuilder token = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            index = (int)(alphaNumString.length() * Math.random());
+            token.append(alphaNumString.charAt(index));
+        }
+        String jsonToken = gson.toJson(token);
+        return ResponseEntity.ok(jsonToken);
     }
 }
