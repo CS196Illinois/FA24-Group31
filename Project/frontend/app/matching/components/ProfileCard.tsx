@@ -10,9 +10,13 @@ interface ProfileCardProps {
 const ProfileCard: React.FC<ProfileCardProps> = ({ name, image, bio }) => {
   return (
     <div className={classes.profileCard}>
-      <img src={image} alt={name} className={classes.profileCardImage} />
-      <h2 className={classes.profileCardName}>{name}</h2>
-      <p className={classes.profileCardBio}>{bio}</p>
+      {/* Scrollable content wrapper around all parameters */}
+      <div className={classes.scrollableContent}>
+        <img src={image} alt={name} className={classes.profileCardImage} />
+        <h2 className={classes.profileCardName}>{name}</h2>
+        <p className={classes.profileCardBio}>{bio}</p>
+        {/* Future parameters can be added here */}
+      </div>
     </div>
   );
 };

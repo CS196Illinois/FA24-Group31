@@ -9,7 +9,15 @@
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: start;
+	overflow: hidden;
+}
+
+.scrollableContent {
+	flex-grow: 1; /* Allow the scrollable content to expand and fill the available space */
+  	overflow-y: auto;
+  	padding: 20px; /* Apply padding inside the scrollable area for content spacing */
+  	box-sizing: border-box; /* Ensure padding doesn’t affect total height */
 }
 
 .profileCardImage {
@@ -79,19 +87,24 @@
 .buttonContainer {
 	position: fixed;
 	bottom: 20rem;
-	width: 100%;
+	width: 70%;
 	height: 25%;
 	display: flex;
 	justify-content: space-around;
 }
 
 .swipeButtonLeft, .swipeButtonRight {
-	padding: 0.5rem 1rem;
-	border-radius: 4px;
-	font-size: 2rem;
+	background-color: transparent; /* Change this color to your preferred color */
 	color: white;
+	padding: 0.5rem 1.5rem; /* Adjust padding for size */
+	border: 2px solid white; /* Outline color */
+	border-radius: 8px; /* Rounded corners */
+	font-size: 1.5rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease; /* Transition effect for hover */
 }
 
 .swipeButtonLeft:hover, .swipeButtonRight:hover  {
-	color: rgb(209, 209, 209);
+	background-color: #e0e0e0; /* Darker shade for hover effect */
+	color: #e0e0e0; /* Lightened text on hover */
 }
