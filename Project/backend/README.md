@@ -51,29 +51,32 @@ double check my sql syntax but you get the logic behind it
 
 > [!NOTE]
 > DB structure will probably change soon but I will update accordingly
-
-> [!CAUTION]
-> Do not delete *.db.bak
-
-> [!TIP]
-> If you accidentally corrupt the database while testing, do `cp main.db.bak main.db'
+> See Postgresql queries examples (here)[https://github.com/CS196Illinois/FA24-Group31/blob/master/Project/backend/java-server/app]
 
 ## private
 
+CREATE and INSERT query examples can be found (here)[https://github.com/CS196Illinois/FA24-Group31/blob/master/Project/backend/java-server/app/populatePrivate.sql]
+
 discord_id: String (primary key)
 
-dob: Int
+dob: Date (YYYY-MM-DD)
 
-one_way_matched: json_array
+one_way_matched: Array\<String\>
 
-two_way_matched: json_array
+two_way_matched: Array\<String\>
 
 | discord_id | dob | one_way_matched | two_way_matched |
 |:-:|:-:|:-:|:-:|
+FDhibSs|1900-01-01|["n8UMm", "HA8mzS"]|["nu5cY4OaWdmfmziw3s", "VAnmg3joCnW0Qdr9R"]
+HA8mzS|1980-05-02|["VAnmg3joCnW0Qdr9R"]|["n8UMm"]
 
 # public
 
+CREATE and INSERT query examples can be found (here)[https://github.com/CS196Illinois/FA24-Group31/blob/master/Project/backend/java-server/app/populatePublic.sql]
+
 discord_id: String (primary key)
+
+riot_id: String
 
 first_name: String
 
@@ -83,14 +86,12 @@ pronouns: String
 
 description: String
 
-roles: json
+roles: Array\<String\>
 
 rank: String
 
-riot_id: String
-
-| discord_id | first_name | last_name | pronouns | description | roles | rank | riot_id |
+| discord_id | riot_id | first_name | last_name | pronouns | description | roles | rank |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-"ILLYpQKhuY3v" | "John" | "Washington" | "any/any" | "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " | ["top","jungle","middle","bottom","suppport"] | platinum |
-mHZhK8TGIIfI|Bea|White|she/her|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle","bottom","suppport"]|bronze|
-vi048PUuSftDY4kU|Mary|White|any/any|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle"]|silver|
+ILLYpQKhuY3v|iUR6fvHAPmAqg#Tizc4"|John|Washington|any/any|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle","bottom","suppport"]|platinum|
+mHZhK8TGIIfI|"d0VEfX5j#l9ade"|Bea|White|she/her|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle","bottom","suppport"]|bronze|
+vi048PUuSftDY4kU|aeVJ2BzlLQlZ#S3u|Mary|White|any/any|Lorem ipsum dolor sit amet, consectetur adipiscing elit. |["top","jungle","middle"]|silver|
