@@ -13,6 +13,7 @@ plugins {
     id("org.graalvm.buildtools.native") version "0.10.3"
     id("com.adarshr.test-logger") version "4.0.0"
     id("com.gradleup.shadow") version "8.3.3"
+
 }
 version "1.0-SNAPSHOT"
 
@@ -31,12 +32,10 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.46.1.3")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.github.cdimascio:dotenv-java:2.3.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mockito:mockito-core:4.0.0")
-
-
-
 }
 
 
