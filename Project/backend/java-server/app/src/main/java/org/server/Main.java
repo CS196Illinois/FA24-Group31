@@ -9,7 +9,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 /**
- * Class for the main server, starts the server and sets up the routes. Prints out the beans provided by Spring Boot in the CLI on startup.
+ * Class for the main server, starts the server and sets up the routes.
+ * Prints out the beans provided by Spring Boot in the CLI on startup.
  *
  * @author adhit2
  */
@@ -29,7 +30,8 @@ public class Main {
    * Prints out the beans provided by Spring Boot in the CLI on startup.
    *
    * @param ctx The application context.
-   * @return A command line runner that prints out the beans provided by Spring Boot in the CLI on startup.
+   * @return A command line runner that prints out the beans
+   * provided by Spring Boot in the CLI on startup.
    */
   @Bean
   public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
