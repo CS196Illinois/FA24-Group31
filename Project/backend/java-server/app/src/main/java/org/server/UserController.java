@@ -9,45 +9,45 @@ import com.google.gson.Gson;
 @RestController
 public class UserController {
 
-    private static final String DB_URL = "jdbc:sqlite:main.db";
-    private final Gson gson;
+  private static final String DB_URL = "jdbc:sqlite:main.db";
+  private final Gson gson;
 
-    DBController db = new DBController(DB_URL);
+  DBController db = new DBController(DB_URL);
 
-    public UserController(Gson gson) {
-        this.gson = gson;
+  public UserController(Gson gson) {
+    this.gson = gson;
+  }
+
+  @PostMapping("/api/v1/_delete_user_/{uuid}")
+  public ResponseEntity<Object> deleteUser(@PathVariable String uuid) {
+    User user = db.getUser(uuid, true);
+    boolean deleted = db.deleteUser(user);
+    if (deleted) {
+      Object response = new Object() {
+        @SuppressWarnings("unused")
+        public final String status = "{\"status\": \"deleted\"}";
+      };
+      return ResponseEntity.ok(response);
+    } else {
+      Object response = new Object() {
+        @SuppressWarnings("unused")
+        public final String status = "{\"status\": \"failed\"}";
+      };
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+  }
 
-    @PostMapping("/api/v1/_delete_user_/{uuid}")
-    public ResponseEntity<Object> deleteUser(@PathVariable String uuid) {
-        User user = db.getUser(uuid, true);
-        boolean deleted = db.deleteUser(user);
-        if (deleted) {
-            Object response = new Object() {
-                @SuppressWarnings("unused")
-                public final String status = "{\"status\": \"deleted\"}";
-            };
-            return ResponseEntity.ok(response);
-        } else {
-            Object response = new Object() {
-                @SuppressWarnings("unused")
-                public final String status = "{\"status\": \"failed\"}";
-            };
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-    }
-
-    @PostMapping("/api/v1/add_user")
-    public ResponseEntity<?> addUser(
-        @RequestParam String uuid,
-        @RequestParam String firstName,
-        @RequestParam String lastName,
-        @RequestParam String riotID,
-        @RequestParam String discordID,
-        @RequestParam String[] oneWayMatched,
-        @RequestParam String[] twoWayMatched
-    ) {
-        User user = new User(
+  @PostMapping("/api/v1/add_user")
+  public ResponseEntity<?> addUser(
+          @RequestParam String uuid,
+          @RequestParam String firstName,
+          @RequestParam String lastName,
+          @RequestParam String riotID,
+          @RequestParam String discordID,
+          @RequestParam String[] oneWayMatched,
+          @RequestParam String[] twoWayMatched
+  ) {
+    User user = new User(
             uuid,
             firstName,
             lastName,
@@ -55,35 +55,35 @@ public class UserController {
             discordID,
             oneWayMatched,
             twoWayMatched
-        );
-        boolean added = db.addUser(user);
-        if (added) {
-            Object response = new Object() {
-                public final String status = "{\"status\": \"created\"}";
-            };
-            return ResponseEntity.ok(response);
-        } else {
-            Object response = new Object() {
-                public final String status = "{\"status\": \"failed\"}";
-            };
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                response
-            );
-        }
+    );
+    boolean added = db.addUser(user);
+    if (added) {
+      Object response = new Object() {
+        public final String status = "{\"status\": \"created\"}";
+      };
+      return ResponseEntity.ok(response);
+    } else {
+      Object response = new Object() {
+        public final String status = "{\"status\": \"failed\"}";
+      };
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+              response
+      );
     }
+  }
 
-    @GetMapping("api/v1/generate_token")
-    public ResponseEntity<String> generateToken() {
-        String alphaNumString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "0123456789"
-                + "abcdefghijklmnopqrstuvxyz";
-        int index;
-        StringBuilder token = new StringBuilder();
-        for (int i = 0; i < 16; i++) {
-            index = (int)(alphaNumString.length() * Math.random());
-            token.append(alphaNumString.charAt(index));
-        }
-        String jsonToken = gson.toJson(token);
-        return ResponseEntity.ok(jsonToken);
+  @GetMapping("api/v1/generate_token")
+  public ResponseEntity<String> generateToken() {
+    String alphaNumString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            + "0123456789"
+            + "abcdefghijklmnopqrstuvxyz";
+    int index;
+    StringBuilder token = new StringBuilder();
+    for (int i = 0; i < 16; i++) {
+      index = (int) (alphaNumString.length() * Math.random());
+      token.append(alphaNumString.charAt(index));
     }
+    String jsonToken = gson.toJson(token);
+    return ResponseEntity.ok(jsonToken);
+  }
 }

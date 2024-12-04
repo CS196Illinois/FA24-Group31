@@ -15,7 +15,6 @@ plugins {
     id("com.gradleup.shadow") version "8.3.3"
 
 }
-version "1.0-SNAPSHOT"
 
 
 repositories {
@@ -33,6 +32,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.github.cdimascio:dotenv-java:2.3.0")
+    implementation("org.postgresql:postgresql:42.7.4")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.mockito:mockito-core:4.0.0")
