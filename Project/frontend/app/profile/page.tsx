@@ -154,8 +154,8 @@ export default function Profile() {
         )}
         <TextInput
           disabled
-          label="Discord ID"
-          placeholder="Discord ID"
+          label="Discord Username"
+          placeholder="Discord Username"
           style={{ marginBottom: '20px', width: '100%' }}
         />
         <Button 
