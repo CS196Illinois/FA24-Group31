@@ -1,33 +1,54 @@
-// Get started page
+'use client';
 import React from 'react';
-import { Container, Button, Text } from '@mantine/core';
-import { HeaderSimple } from "../header";
+import {Container, Button, Text} from '@mantine/core';
+import {HeaderSimple} from "../header";
 import Head from 'next/head';
-import Link from 'next/link';
-import classes from '../HeaderSimple.module.css';
-
-
-
+import {useDiscordLogin, DiscordLoginParams} from 'react-discord-login';
+import {FaDiscord} from 'react-icons/fa';
+import styles from './getStarted.module.css';
 
 const GetStarted = () => {
-  return (
-    <>
-    <HeaderSimple />
-      <Head>
-        <title>Get Started</title>
-      </Head>
-      <Container size="xl" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '75vh', flexDirection: 'column' }}> 
-        
-        <Text size="xl">Welcome to the Get Started Page!</Text>
-        <Text size="md">This is a blank page for new users.</Text>
+    const discordLoginParams: DiscordLoginParams = {
+        clientId: '1292671408026943532',
+        redirectUri: 'http://localhost:3000/login',
+        responseType: 'token',
+        scopes: ['identify'],
+    }
+    const {buildUrl, isLoading} = useDiscordLogin(discordLoginParams);
 
-        {/* Dicsord Login Link INSERT HERE*/}
-        {/* <Button component={Link} className={classes.loginButton} mt="xl" justify="center"> Login with Discord </Button> */}
-        
-        {/* Add any other login methods below if needed...*/}
-      </Container>
-    </>
-  );
+    return (
+        <>
+            <HeaderSimple/>
+            <Head>
+                <title>Get Started</title>
+            </Head>
+            <div className={styles.container}>
+                <div className={styles.getStartedContainer}>
+                    <div className={styles.logoContainer}>
+                        <div className={styles.logo}>💖</div>
+                    </div>
+                    <Text className={styles.getStartedText}>Welcome to the Get Started Page!</Text>
+                    <Text className={styles.getStartedText}>This is a blank page for new
+                        users.</Text>
+                    <Button
+                        onClick={() => (window.location.href = buildUrl())}
+                        disabled={isLoading}
+                        leftSection={<FaDiscord/>}
+                        style={{
+                            backgroundColor: '#7289da',
+                            color: 'white',
+                            marginTop: '20px',
+                            padding: '10px 20px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        Sign in with Discord
+                    </Button>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default GetStarted;
