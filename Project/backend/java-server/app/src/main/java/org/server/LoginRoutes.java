@@ -1,22 +1,27 @@
 package org.server;
 
 import io.mokulu.discord.oauth.model.TokensResponse;
+import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 /** This class represents the routes for login. {@code @Author} adhit2 */
 @RestController
 public class LoginRoutes {
 
   /** This class represents the return value for the login route. {@code @Author} adhit2 */
-  static class ReturnValue {
+  public static class ReturnValue {
     private boolean success;
     private String sessionToken;
 
+    /**
+     * Constructs a new {@link ReturnValue} with the specified success and session token.
+     *
+     * @param success the success
+     * @param sessionToken the session token
+     */
     public ReturnValue(boolean success, String sessionToken) {
       this.success = success;
       this.sessionToken = sessionToken;
@@ -42,7 +47,7 @@ public class LoginRoutes {
   /**
    * Logs in the user.
    *
-   * @param accessToken the access token
+   * @param code the access token
    * @return the response entity containing whether the login was successful and the session token
    */
   @PostMapping(path = "/api/v1/login")

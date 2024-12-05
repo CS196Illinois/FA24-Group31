@@ -7,6 +7,7 @@ import io.mokulu.discord.oauth.model.TokensResponse;
 import io.mokulu.discord.oauth.model.User;
 import java.io.IOException;
 
+/** This class represents the Discord operations. {@code @Author} adhit2 */
 public class DiscordOps {
   private static final Dotenv dotenv = Dotenv.load();
   private static final String clientSecret = dotenv.get("DISCORD_CLIENT_SECRET");
@@ -21,20 +22,20 @@ public class DiscordOps {
   /**
    * Fetches the username.
    *
-   * @param discordID discord ID
+   * @param discordId discord ID
    * @return the username
    * @throws IOException if an error occurs
    */
-  public static String getUsername(String discordID) throws IOException {
-    String accessToken = pgController.getAccessToken(discordID);
+  public static String getUsername(String discordId) throws IOException {
+    String accessToken = pgController.getAccessToken(discordId);
     User user;
     try {
       DiscordAPI api = new DiscordAPI(accessToken);
       user = api.fetchUser();
     } catch (IOException e) {
       // Token might be expired, refresh it
-      pgController.changeAuthToken(discordID);
-      accessToken = pgController.getAccessToken(discordID);
+      pgController.changeAuthToken(discordId);
+      accessToken = pgController.getAccessToken(discordId);
       user = new DiscordAPI(accessToken).fetchUser();
     }
     return user.getUsername();
