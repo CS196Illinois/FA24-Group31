@@ -29,8 +29,28 @@ export default function LoadingScreen() {
         // Simulate API call
         const fetchData = async () => {
             try {
-                const response = await fetch('https://api.yourdatingapp.com/auth') // Replace with your actual API endpoint
-                const data = await response.json()
+                const url = new URL(window.location.href);
+                const hashParams = new URLSearchParams(url.hash.substring(1));
+                const accessToken = hashParams.get('access_token');
+
+                const response = await fetch('http://localhost:8080/api/v1/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({code: accessToken}),
+                });
+
+
+                const data = await response.json();
+                localStorage.setItem('sessionToken', data.sessionToken);
+                if (data.success === true) {
+                    window.location.href = '/matching';
+                } else {
+                    window.location.href = '/profile';
+                }
+
+                console.log('Login successful:', data);
 
                 setLoading(false)
             } catch (error) {

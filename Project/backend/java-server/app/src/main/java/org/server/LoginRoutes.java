@@ -2,6 +2,8 @@ package org.server;
 
 import io.mokulu.discord.oauth.model.TokensResponse;
 import java.io.IOException;
+
+import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +55,8 @@ public class LoginRoutes {
   @PostMapping(path = "/api/v1/login")
   public ResponseEntity<ReturnValue> login(@RequestBody String code) throws IOException {
     PostgreSQLController pgController = new PostgreSQLController();
-    TokensResponse tr = DiscordOps.getTokens(code);
-    String discordId = DiscordOps.getDiscordId(tr.getAccessToken());
+    JSONObject tokens = DiscordOps.getTokens(code);
+    String discordId = DiscordOps.getDiscordId(tokens.getString("access_token"));
     String sessionToken = pgController.doesUserExist(discordId);
     if (sessionToken != null) {
       return ResponseEntity.ok(new ReturnValue(true, sessionToken));
@@ -62,7 +64,8 @@ public class LoginRoutes {
       return ResponseEntity.ok(
           new ReturnValue(
               false,
-              pgController.createAuthRow(discordId, tr.getAccessToken(), tr.getRefreshToken())));
+              pgController.createAuthRow(
+                  discordId, tokens.getString("access_token"), tokens.getString("refresh_token"))));
     }
   }
 }
