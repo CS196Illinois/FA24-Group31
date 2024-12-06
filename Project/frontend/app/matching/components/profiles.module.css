@@ -10,19 +10,20 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	overflow: hidden;
+	overflow: hidden; /* Prevent overflowing outside the card */
 }
 
 .scrollableContent {
-	flex-grow: 1; /* Allow the scrollable content to expand and fill the available space */
-  	overflow-y: auto;
-  	padding: 20px; /* Apply padding inside the scrollable area for content spacing */
-  	box-sizing: border-box; /* Ensure padding doesn’t affect total height */
+	max-height: calc(100% - 20px); /* Ensure it fits within the card's height */
+	overflow-y: auto; /* Enable vertical scrolling */
+	padding-right: 8px; /* Add space for scrollbar */
+	margin-top: 1rem; /* Adjust spacing if needed */
+	box-sizing: border-box; /* Ensure padding doesn't increase the total height */
 }
 
 .profileCardImage {
 	width: 100%;
-	height: 100%;
+	height: 500px;
 	border-radius: 8px;
 	margin-bottom: 8px;
 	align-items: center;
@@ -36,8 +37,47 @@
 }
 
 .profileCardBio {
+	font-size: 1.25rem;
 	color: #4a5568;
 	text-align: left;
+}
+
+.profileCardPronouns,
+.profileCardId,
+.profileCardDescription {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin: 0.5rem 0;
+}
+
+.profileCardRoles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.roleImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px; /* Optional for rounded edges */
+}
+
+.profileCardRank {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.rankImage {
+  width: 50px;
+  height: 50px;
+  margin-right: 8px;
+}
+
+.rankTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
 }
 
 /* SwipeProfiles Container */
