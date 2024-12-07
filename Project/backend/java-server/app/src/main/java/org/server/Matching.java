@@ -23,39 +23,43 @@ public class Matching {
 
     public boolean filterMatches(int minAge, int maxAge, String[] ranks, String[] roles) {
         List<User> newMatchList = new ArrayList<>();
-        fillMatchList();
-        matchList.forEach((user) -> {
-            if (user.getPrivateUser().getAge() >= minAge && user.getPrivateUser().getAge() <= maxAge) {
-                String[] userRoles = user.getPublicUser().getRoles();
-                boolean foundRole = false;
-                outerLoop:
-                for (int i = 0; i < userRoles.length; i++) {
-                    String currentRole = userRoles[i];
-                    for (int j = 0; j < roles.length; j++) {
-                        if (currentRole.toLowerCase().equals(roles[j].toLowerCase())) {
-                            foundRole = true;
-                            break outerLoop;
+        boolean listFilled = fillMatchList();
+        if (listFilled) {
+            matchList.forEach((user) -> {
+                if (user.getPrivateUser().getAge() >= minAge && user.getPrivateUser().getAge() <= maxAge) {
+                    String[] userRoles = user.getPublicUser().getRoles();
+                    boolean foundRole = false;
+                    outerLoop:
+                    for (int i = 0; i < userRoles.length; i++) {
+                        String currentRole = userRoles[i];
+                        for (int j = 0; j < roles.length; j++) {
+                            if (currentRole.toLowerCase().equals(roles[j].toLowerCase())) {
+                                foundRole = true;
+                                break outerLoop;
+                            }
+                        }
+                    }
+                    if (foundRole) {
+                        boolean foundRank = false;
+                        String userRole = user.getPublicUser().getRank();
+                        for (int i = 0; i < ranks.length; i++) {
+                            if (userRole.toLowerCase().equals(ranks[i].toLowerCase())) {
+                                foundRank = true;
+                                break;
+                            }
+                        }
+                        if (foundRank) {
+                            newMatchList.add(user);
                         }
                     }
                 }
-                if (foundRole) {
-                    boolean foundRank = false;
-                    String userRole = user.getPublicUser().getRank();
-                    for (int i = 0; i < ranks.length; i++) {
-                        if (userRole.toLowerCase().equals(ranks[i].toLowerCase())) {
-                            foundRank = true;
-                            break;
-                        }
-                    }
-                    if (foundRank) {
-                        newMatchList.add(user);
-                    }
-                }
+            });
+            matchList = newMatchList;
+            if (matchList.size() > 0) {
+                return true;
+            } else {
+                return false;
             }
-        });
-        matchList = newMatchList;
-        if (matchList.size() > 0) {
-            return true;
         } else {
             return false;
         }

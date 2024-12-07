@@ -2,6 +2,9 @@ package org.server;
 
 import io.mokulu.discord.oauth.model.TokensResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,6 +67,18 @@ public class LoginRoutes {
           new ReturnValue(
               false,
               pgController.createAuthRow(discordId, tr.getAccessToken(), tr.getRefreshToken())));
+    }
+  }
+
+  @PostMapping(path = "api/v1/matching")
+  public ResponseEntity<List<User>> matching(@RequestBody int minAge, @RequestBody int maxAge, @RequestBody String[] ranks, @RequestBody String[] roles) throws IOException {
+    Matching matcher = new Matching();
+    boolean success = matcher.filterMatches(minAge, maxAge, ranks, roles);
+    if (success) {
+      List<User> matches = matcher.getMatchList();
+      return ResponseEntity.ok(matches);
+    } else {
+      return ResponseEntity.ok(new ArrayList<User>());
     }
   }
 }
