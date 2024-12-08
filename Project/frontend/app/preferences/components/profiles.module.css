@@ -1,0 +1,155 @@
+/* ProfileCard Styling */
+.profileCard {
+	width: 500px;
+	height: 650px;
+	background-color: white;
+	text-align: left;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+	overflow: hidden; /* Prevent overflowing outside the card */
+}
+
+.scrollableContent {
+	max-height: calc(100% - 20px); /* Ensure it fits within the card's height */
+	overflow-y: auto; /* Enable vertical scrolling */
+	padding-right: 8px; /* Add space for scrollbar */
+	margin-top: 1rem; /* Adjust spacing if needed */
+	box-sizing: border-box; /* Ensure padding doesn't increase the total height */
+}
+
+.profileCardImage {
+	width: 100%;
+	height: 500px;
+	border-radius: 8px;
+	margin-bottom: 8px;
+	align-items: center;
+	background-color: black;
+}
+
+.profileCardName {
+	font-size: 1.75rem;
+	font-weight: bold;
+	text-align: left;
+}
+
+.profileCardBio {
+	font-size: 1.25rem;
+	color: #4a5568;
+	text-align: left;
+}
+
+.profileCardPronouns,
+.profileCardId,
+.profileCardDescription {
+  font-size: 1.25rem;
+  color: #4a5568;
+  margin: 0.5rem 0;
+}
+
+.profileCardRoles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.roleImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px; /* Optional for rounded edges */
+}
+
+.profileCardRank {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.rankImage {
+  width: 50px;
+  height: 50px;
+  margin-right: 8px;
+}
+
+.rankTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.roleTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* SwipeProfiles Container */
+.profilesContainer {
+	position: relative;
+	width: 320px;
+	height: 384px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.profileWrapper {
+	width: 100%;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.swipeCard {
+	position: absolute;
+	width: 500px;
+	height: 320px;
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.75rem;
+	transition: transform 0.3s ease-in-out;
+	z-index: 20;
+}
+
+.noMoreProfiles {
+	width: 256px;
+	height: 320px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1.75rem;
+	color: white;
+}
+
+/* Button Styling */
+.buttonContainer {
+	position: fixed;
+	bottom: 20rem;
+	width: 70%;
+	height: 20%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.swipeButtonLeft, .swipeButtonRight {
+	background-color: transparent; /* Change this color to your preferred color */
+	color: white;
+	padding: 0.5rem 1.5rem; /* Adjust padding for size */
+	border: 2px solid white; /* Outline color */
+	border-radius: 8px; /* Rounded corners */
+	font-size: 1.5rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease; /* Transition effect for hover */
+}
+
+.swipeButtonLeft:hover, .swipeButtonRight:hover  {
+	background-color: #e0e0e0; /* Darker shade for hover effect */
+	color: #e0e0e0; /* Lightened text on hover */
+}
