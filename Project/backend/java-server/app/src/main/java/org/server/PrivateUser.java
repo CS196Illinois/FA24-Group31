@@ -7,7 +7,7 @@ import java.util.Arrays;
 /** This class represents a private user. @Author adhit2 */
 public class PrivateUser {
   private String discordId;
-  private LocalDate dob;
+  private String dob;
   private String[] oneWayMatched;
   private String[] twoWayMatched;
 
@@ -21,7 +21,7 @@ public class PrivateUser {
    */
   public PrivateUser(String discordId, String dob, String[] oneWayMatched, String[] twoWayMatched) {
     this.discordId = discordId;
-    this.dob = LocalDate.parse(dob);
+    this.dob = dob;
     this.oneWayMatched = oneWayMatched;
     this.twoWayMatched = twoWayMatched;
   }
@@ -38,15 +38,15 @@ public class PrivateUser {
   }
 
   public int getAge() {
-    return Period.between(dob, LocalDate.now()).getYears();
+    return Period.between(LocalDate.parse(dob), LocalDate.now()).getYears();
   }
 
-  public LocalDate getDoB() {
+  public String getDoB() {
     return dob;
   }
 
   public void setDoB(String dob) {
-    this.dob = LocalDate.parse(dob);
+    this.dob = dob;
   }
 
   public String[] getOneWayMatched() {

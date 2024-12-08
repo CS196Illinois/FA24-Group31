@@ -1,11 +1,14 @@
 package org.server;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -73,6 +76,16 @@ public class ProfileRoutes {
     User user = new User(privateUser, publicUser);
     pgController.createUser(user);
     return new ResponseEntity<>(true, HttpStatus.CREATED);
+  }
+
+  @GetMapping("/api/v1/me")
+  public ResponseEntity<User> me(@RequestBody JsonObject sessionToken) {
+    PostgreSQLController pgController = new PostgreSQLController();
+    String discordId = pgController.getDiscordId(sessionToken.get("session_token").getAsString());
+    User user = pgController.getUser(discordId);
+    ResponseEntity<User> value = new ResponseEntity<>(user, HttpStatus.OK);
+    Logger.getGlobal().info("User: " + user);
+    return value;
   }
 
   private String[] toArray(JsonArray jsonArray) {

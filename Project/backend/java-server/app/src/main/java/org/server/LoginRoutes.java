@@ -2,16 +2,12 @@ package org.server;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.concurrent.ExecutionException;
-
-import com.google.gson.JsonParser;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,7 +76,12 @@ public class LoginRoutes {
   }
 
   @PostMapping(path = "/api/v1/matching")
-  public ResponseEntity<List<User>> matching(@RequestBody int minAge, @RequestBody int maxAge, @RequestBody String[] ranks, @RequestBody String[] roles) throws IOException {
+  public ResponseEntity<List<User>> matching(
+      @RequestBody int minAge,
+      @RequestBody int maxAge,
+      @RequestBody String[] ranks,
+      @RequestBody String[] roles)
+      throws IOException {
     Matching matcher = new Matching();
     boolean success = matcher.filterMatches(minAge, maxAge, ranks, roles);
     if (success) {
