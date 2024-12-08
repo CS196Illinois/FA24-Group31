@@ -11,10 +11,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.gson.JsonParser;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /** This class represents the routes for login. {@code @Author} adhit2 */
 @RestController
@@ -80,14 +77,21 @@ public class LoginRoutes {
   }
 
   @PostMapping(path = "/api/v1/matching")
-  public ResponseEntity<List<User>> matching(@RequestBody int minAge, @RequestBody int maxAge, @RequestBody String[] ranks, @RequestBody String[] roles) throws IOException {
+  public ResponseEntity<List<User>> matching(@RequestParam int minAge, @RequestParam int maxAge, @RequestParam String[] ranks, @RequestParam String[] roles) throws IOException {
     Matching matcher = new Matching();
-    boolean success = matcher.filterMatches(minAge, maxAge, ranks, roles);
+    boolean success = matcher.fillMatches(minAge, maxAge, ranks, roles);
     if (success) {
       List<User> matches = matcher.getMatchList();
       return ResponseEntity.ok(matches);
     } else {
-      return ResponseEntity.ok(new ArrayList<User>());
+      return ResponseEntity.ok(new ArrayList<>());
     }
+  }
+
+  @PostMapping(path = "/api/v1/update_matches")
+  public ResponseEntity<ReturnValue> updateMatches(@RequestParam String userId, @RequestParam String matchedId) {
+    OneAndTwoWayMatches oneAndTwoWayMatches = new OneAndTwoWayMatches();
+    boolean success = oneAndTwoWayMatches.updateMatches(userId, matchedId);
+    return ResponseEntity.ok(new ReturnValue(success, ""));
   }
 }

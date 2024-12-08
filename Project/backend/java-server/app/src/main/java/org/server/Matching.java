@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class Matching {
   private List<User> matchList = new ArrayList<>();
-  private Map<String, Integer> ranks = new HashMap<>();
 
   public boolean fillMatchList() {
     matchList.clear();
@@ -24,7 +23,7 @@ public class Matching {
     return true;
   }
 
-  public boolean newFillMatchList(int minAge, int maxAge, String[] ranks, String[] roles) {
+  public boolean fillMatches(int minAge, int maxAge, String[] ranks, String[] roles) {
     matchList.clear();
     PostgreSQLController pgController = new PostgreSQLController();
     try {
