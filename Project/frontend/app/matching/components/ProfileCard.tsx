@@ -6,15 +6,12 @@ interface ProfileCardProps {
   age: number;
   image: string;
   bio: string;
-  pronouns: string;
+  pronouns: string[];
   riotId: string;
   discordId: string;
   description: string;
   roles: string[]; // Array of image URLs
-  rank: {
-    title: string; // Rank as a string
-    image: string; // Rank image URL
-  };
+  rank: string;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
