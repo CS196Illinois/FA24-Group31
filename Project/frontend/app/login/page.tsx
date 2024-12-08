@@ -1,4 +1,3 @@
-// Add an empty dependency array here
 'use client'
 
 import {useState, useEffect} from 'react'
@@ -8,13 +7,28 @@ import styles from './loading.module.css'
 export default function LoadingScreen() {
     const [loading, setLoading] = useState(true)
     const [loadingText, setLoadingText] = useState('Finding your perfect match in Runeterra...')
+    let hasRequested = false
 
     const loadingPhrases = [
-        'Finding your perfect match in Runeterra...',
-        'Consulting with Heimerdinger\'s matchmaking algorithm...',
-        'Casting love spells with Lux...',
-        'Asking Cupid Varus for advice...',
-        'Searching the Crystal Rose garden...'
+	    "Finding your perfect match in Runeterra...",
+	    "Consulting with Heimerdinger's matchmaking algorithm...",
+	    "Casting love spells with Lux...",
+	    "Asking Cupid Varus for advice...",
+	    "Searching the Crystal Rose garden...",
+	    "Seeking wisdom from Star Guardian Ahri...",
+	    "Getting matchmaking tips from Spirit Blossom Thresh...",
+	    "Dancing with Sweetheart Rakan and Xayah...",
+	    "Consulting Sona's love fortune...",
+	    "Brewing a love potion with Singed...",
+	    "Reading your fortune with Twisted Fate...",
+	    "Arranging hearts with Star Guardian Seraphine...",
+	    "Getting relationship advice from Nami...",
+	    "Crafting a perfect match in Ornn's forge...",
+	    "Exploring the Pool Party for your soulmate...",
+	    "Searching through Bard's cosmic connections...",
+	    "Collecting love notes from Heartseeker Quinn...",
+	    "Matching souls in the Spirit Realm...",
+	    "Checking Ezreal's dating map..."
     ]
 
     useEffect(() => {
@@ -28,33 +42,38 @@ export default function LoadingScreen() {
 
         // Simulate API call
         const fetchData = async () => {
-            try {
-                // Get the access token from the URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const accessToken = urlParams.get('code');
+            if (!hasRequested) {
 
-                const response = await fetch('http://localhost:8080/api/v1/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({code: accessToken}),
-                });
+                hasRequested = true
+                try {
+                    // Get the access token from the URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const accessToken = urlParams.get('code');
 
-                const data = await response.json();
-                localStorage.setItem('sessionToken', data.sessionToken);
-                if (data.success === true) {
-                    window.location.href = '/matching';
-                } else {
-                    window.location.href = '/profile';
+                    const response = await fetch('http://10.195.197.251:8080/api/v1/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({code: accessToken}),
+                    });
+
+
+                    const data = await response.json();
+                    localStorage.setItem('sessionToken', data.sessionToken);
+                    if (data.success === true) {
+                        window.location.href = '/matching';
+                    } else {
+                        window.location.href = '/profile';
+                    }
+
+                    console.log('Login successful:', data);
+
+                    setLoading(false)
+                } catch (error) {
+                    console.error('Login failed:', error)
+                    // Handle error state
                 }
-
-                console.log('Login successful:', data);
-
-                setLoading(false)
-            } catch (error) {
-                console.error('Login failed:', error)
-                // Handle error state
             }
         }
 

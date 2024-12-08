@@ -3,10 +3,7 @@ package org.server;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.scribejava.apis.DiscordApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Response;
-import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.model.*;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
@@ -68,18 +65,11 @@ public class DiscordOps {
   public String getUsername(String discordId)
       throws IOException, ExecutionException, InterruptedException {
     try {
-      final OAuthRequest request =
-          new OAuthRequest(Verb.GET, DISCORD_API_URL + "/users/" + discordId);
-      service.signRequest(pgController.getAccessToken(discordId), request);
-      Response response = service.execute(request);
-      return response.getBody().split("\"username\":\"")[1].split("\"")[0];
+      return getString(pgController.getAccessToken(discordId), "username");
+
     } catch (Exception e) {
       refreshToken(pgController.getRefreshToken(discordId), discordId);
-      final OAuthRequest request =
-          new OAuthRequest(Verb.GET, DISCORD_API_URL + "/users/" + discordId);
-      service.signRequest(pgController.getAccessToken(discordId), request);
-      Response response = service.execute(request);
-      return response.getBody().split("\"username\":\"")[1].split("\"")[0];
+      return getString(pgController.getAccessToken(discordId), "username");
     }
   }
 
@@ -95,6 +85,7 @@ public class DiscordOps {
   public void refreshToken(String refreshToken, String discordId)
       throws IOException, ExecutionException, InterruptedException {
     final OAuth2AccessToken accessToken = service.refreshAccessToken(refreshToken);
+    pgController.setRefreshToken(discordId, accessToken.getRefreshToken());
     pgController.changeAuthToken(
         accessToken.getAccessToken(), pgController.getDiscordId(refreshToken));
   }
@@ -125,20 +116,20 @@ public class DiscordOps {
   public String getDiscordId(String accessToken)
       throws IOException, ExecutionException, InterruptedException {
     try {
-      return getString(accessToken);
+      return getString(accessToken, "id");
     } catch (Exception e) {
       String discordId = pgController.getDiscordId(accessToken);
       refreshToken(pgController.getRefreshToken(discordId), discordId);
-      return getString(accessToken);
+      return getString(accessToken, "id");
     }
   }
 
-  private String getString(String accessToken)
+  private String getString(String accessToken, String type)
       throws InterruptedException, ExecutionException, IOException {
     final OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
     service.signRequest(accessToken, request);
     Response response = service.execute(request);
     Logger.getGlobal().info(response.getBody());
-    return response.getBody().split("\"id\":\"")[1].split("\"")[0];
+    return response.getBody().split("\"" + type + "\":\"")[1].split("\"")[0];
   }
 }

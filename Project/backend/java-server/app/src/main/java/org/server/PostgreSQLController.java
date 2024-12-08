@@ -1,14 +1,12 @@
 package org.server;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -82,27 +80,11 @@ public class PostgreSQLController {
   }
 
   /**
-   * Creates a new user in the database.
+   * Creates a new auth row in the database.
    *
-   * @param discordId the Discord ID of the user
-   * @param riotId the Riot ID of the user
-   * @param firstName the first name of the user
-   * @param lastName the last name of the user
-   * @param pronouns the pronouns of the user
-   * @param description the description of the user
-   * @param roles the roles that the user plays
+   * @param user the user to create:w
    */
-  public void createUser(
-      String discordId,
-      String riotId,
-      String firstName,
-      String lastName,
-      String[] pronouns,
-      String description,
-      String[] roles,
-      String rank,
-      String image,
-      LocalDate dob) {
+  public void createUser(User user) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
@@ -121,19 +103,20 @@ public class PostgreSQLController {
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
 
-        stmtPrivate.setString(1, discordId);
-        stmtPrivate.setDate(2, Date.valueOf(dob));
+        stmtPrivate.setString(1, user.getPublicUser().getDiscordId());
+        stmtPrivate.setDate(2, Date.valueOf(user.getPrivateUser().getDoB()));
         stmtPrivate.executeUpdate();
 
-        stmtPublic.setString(1, discordId);
-        stmtPublic.setString(2, riotId);
-        stmtPublic.setString(3, firstName);
-        stmtPublic.setString(4, lastName);
-        stmtPublic.setArray(5, connection.createArrayOf("text", pronouns));
-        stmtPublic.setString(6, description);
-        stmtPublic.setArray(7, connection.createArrayOf("text", roles));
-        stmtPublic.setString(8, rank);
-        stmtPublic.setString(9, image);
+        stmtPublic.setString(1, user.getPublicUser().getDiscordId());
+        stmtPublic.setString(2, user.getPublicUser().getRiotId());
+        stmtPublic.setString(3, user.getPublicUser().getFirstName());
+        stmtPublic.setString(4, user.getPublicUser().getLastName());
+        stmtPublic.setArray(
+            5, connection.createArrayOf("text", user.getPublicUser().getPronouns()));
+        stmtPublic.setString(6, user.getPublicUser().getDescription());
+        stmtPublic.setArray(7, connection.createArrayOf("text", user.getPublicUser().getRoles()));
+        stmtPublic.setString(8, user.getPublicUser().getRank());
+        stmtPublic.setString(9, user.getPublicUser().getImage());
         stmtPublic.executeUpdate();
 
         connection.commit();
@@ -214,7 +197,7 @@ public class PostgreSQLController {
   }
 
   public List<User> getUsers() throws SQLException {
-    List<User> users = new ArrayList<User>();
+    List<User> users = new ArrayList<>();
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
@@ -222,37 +205,35 @@ public class PostgreSQLController {
       String sqlPrivate = "SELECT * FROM private";
       String sqlPublic = "SELECT * FROM public";
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
-           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
 
         ResultSet priv = stmtPrivate.executeQuery();
         ResultSet pub = stmtPublic.executeQuery();
 
         while (priv.next() && pub.next()) {
-          if (priv.getArray("one_way_matched") == null) {
-
-          }
+          if (priv.getArray("one_way_matched") == null) {}
           PrivateUser privateUser =
-                  new PrivateUser(
-                          priv.getString("discord_id"),
-                          priv.getDate("dob").toString(),
-                          priv.getArray("one_way_matched") != null
-                            ? (String[]) priv.getArray("one_way_matched").getArray()
-                                  : new String[0],
-                          priv.getArray("two_way_matched") != null
-                          ? (String[]) priv.getArray("two_way_matched").getArray()
-                          :new String[0]);
+              new PrivateUser(
+                  priv.getString("discord_id"),
+                  priv.getDate("dob").toString(),
+                  priv.getArray("one_way_matched") != null
+                      ? (String[]) priv.getArray("one_way_matched").getArray()
+                      : new String[0],
+                  priv.getArray("two_way_matched") != null
+                      ? (String[]) priv.getArray("two_way_matched").getArray()
+                      : new String[0]);
 
           PublicUser publicUser =
-                  new PublicUser(
-                          pub.getString("discord_id"),
-                          pub.getString("riot_id"),
-                          pub.getString("first_name"),
-                          pub.getString("last_name"),
-                          (String[]) pub.getArray("pronouns").getArray(),
-                          pub.getString("description"),
-                          (String[]) pub.getArray("roles").getArray(),
-                          pub.getString("rank"),
-                          pub.getString("image"));
+              new PublicUser(
+                  pub.getString("discord_id"),
+                  pub.getString("riot_id"),
+                  pub.getString("first_name"),
+                  pub.getString("last_name"),
+                  (String[]) pub.getArray("pronouns").getArray(),
+                  pub.getString("description"),
+                  (String[]) pub.getArray("roles").getArray(),
+                  pub.getString("rank"),
+                  pub.getString("image"));
 
           users.add(new User(privateUser, publicUser));
         }
@@ -278,7 +259,7 @@ public class PostgreSQLController {
   }
 
   /**
-   * Updates the user in the database.
+   * Gets an access token.
    *
    * @param discordID the discord ID of the user
    * @return the user's access token
@@ -434,7 +415,7 @@ public class PostgreSQLController {
         stmtAuth.setString(1, sessionToken);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
-          return auth.getString("discord_id");
+          return auth.getString(1);
         }
         connection.commit();
       } catch (SQLException e) {
@@ -455,6 +436,34 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("Invalid Session Token");
   }
 
+  public void setRefreshToken(String discordId, String refreshToken) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlAuth = "UPDATE auth SET refresh_token = ? WHERE discord_id = ?";
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
+        stmtAuth.setString(1, refreshToken);
+        stmtAuth.setString(2, discordId);
+        stmtAuth.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+  }
+
   /**
    * Updates the user in the database.
    *
@@ -471,7 +480,7 @@ public class PostgreSQLController {
         stmtAuth.setString(1, discordId);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
-          return auth.getString("refresh_token");
+          return auth.getString(1);
         }
         connection.commit();
       } catch (SQLException e) {
@@ -523,6 +532,41 @@ public class PostgreSQLController {
         System.err.println(e.getMessage());
       }
     }
+  }
+
+  public boolean hasUserBeenCreated(String discordID) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "SELECT * FROM private WHERE discord_id = ?";
+      String sqlPublic = "SELECT * FROM public WHERE discord_id = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
+        stmtPrivate.setString(1, discordID);
+        stmtPublic.setString(1, discordID);
+        ResultSet priv = stmtPrivate.executeQuery();
+        ResultSet pub = stmtPublic.executeQuery();
+        if (priv.next() && pub.next()) {
+          return true;
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return false;
   }
 
   /** Tests the connection to the database. */

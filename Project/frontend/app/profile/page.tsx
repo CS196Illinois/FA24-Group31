@@ -1,18 +1,20 @@
 // Profile edit page
 // Should be able to customize your own aspects but there's some stuff pre-filled out already
 'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MantineProvider, TextInput, Container, Button, Text, MultiSelect, Select, FileInput, FileInputProps} from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { HeaderSimple } from '../header';
 
 import '@mantine/dates/styles.css';
 
 // Define the Profile component
 export default function Profile() {
+	const [token, setToken] = useState<string>('');
+	const [discord, setDiscord] = useState<string>('');
   const [firstName, setFirstName] = useState<string>(''); // Store first name
   const [lastName, setLastName] = useState<string>(''); // Store last name
-  const [dob, setDob] = useState<Date | null>(null)
+  const [dob, setDob] = useState<Date>(null)
   const [riotId, setRiotId] = useState<string>(''); // Store Riot ID
   const [pronouns, setPronouns] = useState<string[]>([]);
   const [description, setDescription] = useState<string>('');
@@ -20,10 +22,36 @@ export default function Profile() {
   const [rank, setRank] = useState<string>('');
   const [profilePicture, setProfilePicture] = useState<File>(null);
   const [b64ProfilePicture, setB64ProfilePicture] = useState<string>('');
-  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; riotId?: string }>({}); // Store validation error messages
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; riotId?: string, dob?: string }>({}); // Store validation error messages
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true); // Disable submit button initially
 
   const debounceTimeout = useRef<NodeJS.Timeout | null>(null); // Ref to store timeout for debouncing
+
+	let discordCall = false;
+	useEffect(() => {
+	  if (typeof window !== "undefined") {
+		if (discordCall == false) {
+			discordCall = true;
+			const token = localStorage.getItem("sessionToken");
+			setToken(token);
+			fetch('http://10.195.197.251:8080/api/v1/username', {
+				method: 'POST',
+				body: JSON.stringify({session_token: token}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+			.then((res) => res.json())
+			.then((data) => {
+				setDiscord(data.discord_username);
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+		}
+
+		}
+	}, []);
 
   // Validation function for alphabetic names (first and last)
   const validateName = (name: string) => {
@@ -59,6 +87,15 @@ export default function Profile() {
     return ''; // No error, return an empty string
   };
 
+  const validateDob = (dob: Date) => {
+	const today = new Date().getFullYear();
+	if (today - dob.getFullYear() < 18) {
+		return 'You must be 18 or older to register';
+	}
+
+	return '';
+  }
+
   // Debounced validation function
   const debounceValidation = (callback: () => void, delay: number = 500) => {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -75,6 +112,15 @@ export default function Profile() {
       const riotError = validateRiotId(value);
       setErrors((prev) => ({ ...prev, riotId: riotError ? riotError : undefined })); // Set error for Riot ID
     });
+  };
+
+const handleDob = (value: Date | '') => {
+    setDob(value);
+debounceValidation(() => {
+      const error = validateDob(value);
+      setErrors((prev) => ({ ...prev, dob: error ? error : undefined })); // Set error for Riot ID
+    });
+
   };
 
   // Handle the input change event for First Name
@@ -183,49 +229,56 @@ const rankOptions: readonly RolesOption[] = [
       firstName !== '' &&
       lastName !== '' &&
       riotId !== '' &&
+      dob !== '' &&
       validateName(firstName) &&
       validateName(lastName) &&
-      !validateRiotId(riotId); // Ensure Riot ID has no error message
+      !validateRiotId(riotId) &&
+	!validateDob(dob);
 
     setIsSubmitDisabled(!isFormValid);
-  }, [firstName, lastName, riotId]); // Revalidate when any of these fields change
+  }, [firstName, lastName, riotId, dob]); // Revalidate when any of these fields change
 
   function createAccountRequest() {
     // Send the form data to the server
-    const formData = new FormData();
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('dob', dob.toString());
-    formData.append('riot_id', riotId);
-    formData.append('pronouns', pronouns.join(','));
-    formData.append('description', description);
-    formData.append('roles', roles.join(','));
-    formData.append('rank', rank);
-    formData.append('b64_profile_pic', b64ProfilePic);
+    const jsonBody = JSON.stringify({
+      first_name: firstName,
+      last_name: lastName,
+      dob: dob.toISOString().slice(0, 10),
+      riot_id: riotId,
+      pronouns: pronouns,
+      description: description,
+      roles: roles,
+      rank: rank,
+      image: b64ProfilePicture,
+      session_token: token
+    });
+	console.log(jsonBody);
 
-    fetch('/api/v1/users/create_user', {
+    fetch('http://10.195.197.251:8080/api/v1/create_user', {
       method: 'POST',
-      body: formData,
+      body: jsonBody,
+      headers: {
+	      'Content-Type': 'application/json'
+      }
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        // Redirect to the profile page
-        window.location.href = '/profile';
+        window.location.href = '/matching';
       })
       .catch((err) => {
+	console.error(data.status);
         console.error(err);
       });
   }
 
   return (
     <MantineProvider>
-      <HeaderSimple />
       <Container
         size="xs"
         style={{
           display: 'flex',
-          justifyContent: 'end',
+          justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
           height: '95vh',
@@ -254,10 +307,11 @@ const rankOptions: readonly RolesOption[] = [
           <Text color="red" style={{ marginBottom: '10px' }}>{errors.lastName}</Text>
         )}
         <DatePickerInput
+		format="YYYY-MM-DD"
           label="Date of Birth"
           placeholder="Enter your date of birth"
           value={dob}
-          onChange={setDob}
+          onChange={handleDob}
           required
           // generate style make calendar header control icon smaller
           style={{ marginBottom: '20px', width: '100%'}}
@@ -299,7 +353,7 @@ const rankOptions: readonly RolesOption[] = [
         />
         <TextInput
           label="Riot ID (with Tag #)"
-          placeholder="Enter your Riot ID with tag (e.g., Ekansh#1234)"
+          placeholder="Enter your Riot ID with tag"
           value={riotId}
           onChange={handleRiotIdChange} // Handle event with properly typed function
           required // Make field required
@@ -321,7 +375,7 @@ const rankOptions: readonly RolesOption[] = [
         <TextInput
           disabled
           label="Discord Username"
-          placeholder="Discord Username"
+          placeholder={discord}
           style={{ marginBottom: '20px', width: '100%' }}
         />
         <Button
