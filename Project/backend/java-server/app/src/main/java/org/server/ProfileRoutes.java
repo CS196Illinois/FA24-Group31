@@ -72,7 +72,11 @@ public class ProfileRoutes {
             jsonObject.get("image").getAsString());
     PrivateUser privateUser =
         new PrivateUser(
-            discordId, jsonObject.get("dob").getAsString(), new String[0], new String[0]);
+            discordId,
+            jsonObject.get("dob").getAsString(),
+            new String[0],
+            new String[0],
+            new String[0]);
     User user = new User(privateUser, publicUser);
     pgController.createUser(user);
     return new ResponseEntity<>(true, HttpStatus.CREATED);

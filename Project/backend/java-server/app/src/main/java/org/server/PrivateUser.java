@@ -10,6 +10,7 @@ public class PrivateUser {
   private String dob;
   private String[] oneWayMatched;
   private String[] twoWayMatched;
+  private String[] seen;
 
   /**
    * Constructs a new {@link PrivateUser} with the specified discord ID, date of birth, one-way.
@@ -19,16 +20,16 @@ public class PrivateUser {
    * @param oneWayMatched the one-way matched
    * @param twoWayMatched the two-way matched
    */
-  public PrivateUser(String discordId, String dob, String[] oneWayMatched, String[] twoWayMatched) {
+  public PrivateUser(
+      String discordId, String dob, String[] oneWayMatched, String[] twoWayMatched, String[] seen) {
     this.discordId = discordId;
     this.dob = dob;
     this.oneWayMatched = oneWayMatched;
     this.twoWayMatched = twoWayMatched;
+    this.seen = seen;
   }
 
   /** Constructs a new {@link PrivateUser}. */
-  public PrivateUser() {}
-
   public String getDiscordId() {
     return discordId;
   }
@@ -79,5 +80,13 @@ public class PrivateUser {
         + ", twoWayMatched="
         + Arrays.toString(twoWayMatched)
         + '}';
+  }
+
+  public String[] getSeen() {
+    return seen;
+  }
+
+  public void setSeen(String[] seen) {
+    this.seen = seen;
   }
 }

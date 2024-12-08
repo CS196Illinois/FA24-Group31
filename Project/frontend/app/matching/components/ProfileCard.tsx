@@ -3,6 +3,7 @@ import classes from './profiles.module.css';
 
 interface ProfileCardProps {
   name: string;
+  age: number;
   image: string;
   bio: string;
   pronouns: string;
@@ -18,6 +19,7 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
   name,
+  age,
   image,
   bio,
   pronouns,
@@ -33,28 +35,17 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       <div className={classes.scrollableContent}>
         <img src={image} alt={name} className={classes.profileCardImage} />
         <h2 className={classes.profileCardName}>{name}</h2>
+        <p className={classes.profileCardBio}>{age}</p>
         <p className={classes.profileCardBio}>{bio}</p>
         <p className={classes.profileCardPronouns}>Pronouns: {pronouns}</p>
         <p className={classes.profileCardId}>Riot ID: {riotId}</p>
         <p className={classes.profileCardId}>Discord ID: {discordId}</p>
         <p className={classes.profileCardDescription}>{description}</p>
         <div className={classes.profileCardRoles}>
-          {roles.map((role, index) => (
-            <img
-              key={index}
-              src={role}
-              alt={`Role ${index + 1}`}
-              className={classes.roleImage}
-            />
-          ))}
+	  <span className={classes.roleTitle}>Roles: {roles}</span>
         </div>
         <div className={classes.profileCardRank}>
-          <img
-            src={rank.image}
-            alt={rank.title}
-            className={classes.rankImage}
-          />
-          <span className={classes.rankTitle}>{rank.title}</span>
+          <span className={classes.rankTitle}>Rank: {rank.title}</span>
         </div>
       </div>
     </div>

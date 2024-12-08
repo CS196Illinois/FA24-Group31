@@ -1,7 +1,7 @@
 /* ProfileCard Styling */
 .profileCard {
 	width: 500px;
-	height: 700px;
+	height: 650px;
 	background-color: white;
 	text-align: left;
 	padding: 20px;
@@ -76,6 +76,11 @@
 }
 
 .rankTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.roleTitle {
   font-size: 1.25rem;
   font-weight: bold;
 }

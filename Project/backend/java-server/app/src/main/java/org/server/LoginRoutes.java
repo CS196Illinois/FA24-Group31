@@ -74,21 +74,4 @@ public class LoginRoutes {
               pgController.createAuthRow(discordId, tr.getAccessToken(), tr.getRefreshToken())));
     }
   }
-
-  @PostMapping(path = "/api/v1/matching")
-  public ResponseEntity<List<User>> matching(
-      @RequestBody int minAge,
-      @RequestBody int maxAge,
-      @RequestBody String[] ranks,
-      @RequestBody String[] roles)
-      throws IOException {
-    Matching matcher = new Matching();
-    boolean success = matcher.filterMatches(minAge, maxAge, ranks, roles);
-    if (success) {
-      List<User> matches = matcher.getMatchList();
-      return ResponseEntity.ok(matches);
-    } else {
-      return ResponseEntity.ok(new ArrayList<User>());
-    }
-  }
 }
