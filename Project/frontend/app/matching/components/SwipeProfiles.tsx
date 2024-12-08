@@ -9,18 +9,21 @@ interface Filter {
     ageRange: [number, number];
 }
 
+interface Profile {
+    name: string;
+    image: string;
+    bio: string;
+    pronouns: string[];
+    riotId: string;
+    discordId: string;
+    roles: string[];
+    rank: string;
+    age: number;
+    description?: string; // Add description property if needed
+}
+
 interface SwipeProfilesProps {
-    profiles: {
-        name: string;
-        image: string;
-        bio: string;
-        pronouns: string[];
-        riotId: string;
-        discordId: string;
-        roles: string[];
-        rank: string;
-        age: number;
-    }[];
+    profiles: Profile[];
     filters: Filter;
 }
 
@@ -32,46 +35,57 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
     const [startPosition, setStartPosition] = useState<number | null>(null);
     const [dragDistance, setDragDistance] = useState(0);
 
-    // Function to fetch new profiles from the backend
     const fetchProfiles = async () => {
         try {
-            const response = await fetch('http://10.195.197.251:8080/api/v1/next_user');
-            console.log(response);
+            const response = await fetch('http://10.195.197.251:8080/api/v1/next_user', {
+                method: 'POST',
+                headers: {'content-type': 'application/json'},
+                body: JSON.stringify({session_token: localStorage.getItem('sessionToken')})
+            });
             const newProfiles = await response.json();
-            setFilteredProfiles(newProfiles);
+            if (Array.isArray(newProfiles)) {
+                setFilteredProfiles(newProfiles);
+            }
         } catch (error) {
             console.error('Error fetching profiles:', error);
         }
     };
 
-    // Define swipe functions first
-    const swipeLeft = useCallback(async () => {
-        if (currentIndex < filteredProfiles.length) {
-            setSwipeDirection('left');
-            setTimeout(() => {
-                setCurrentIndex((prevIndex) => prevIndex + 1);
-                setSwipeDirection(null);
-                setDragDistance(0);
-                // Fetch new profiles when the user swipes left
-                fetchProfiles();
-            }, 300);
-        }
+    const swipeLeft = useCallback(() => {
+        if (currentIndex >= filteredProfiles.length) return;
+
+        setSwipeDirection('left');
+        const timer = setTimeout(() => {
+            setCurrentIndex(prevIndex => prevIndex + 1);
+            setSwipeDirection(null);
+            setDragDistance(0);
+            fetchProfiles();
+        }, 300);
+
+        return () => clearTimeout(timer);
     }, [currentIndex, filteredProfiles.length]);
 
-    const swipeRight = useCallback(async () => {
-        if (currentIndex < filteredProfiles.length) {
-            setSwipeDirection('right');
-            setTimeout(() => {
-                setCurrentIndex((prevIndex) => prevIndex + 1);
-                setSwipeDirection(null);
-                setDragDistance(0);
-                // Fetch new profiles when the user swipes right
-                fetchProfiles();
-            }, 300);
-        }
+    const swipeRight = useCallback(() => {
+        if (currentIndex >= filteredProfiles.length) return;
+
+        setSwipeDirection('right');
+        const timer = setTimeout(() => {
+            setCurrentIndex(prevIndex => prevIndex + 1);
+            setSwipeDirection(null);
+            setDragDistance(0);
+            fetchProfiles();
+        }, 300);
+
+        return () => clearTimeout(timer);
     }, [currentIndex, filteredProfiles.length]);
 
-    // Then define mouse handling functions
+    useEffect(() => {
+        if (!profiles || profiles.length === 0) {
+            return;
+        }
+        setFilteredProfiles(profiles);
+    }, [profiles]);
+
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         setDragging(true);
         setStartPosition(e.clientX);
@@ -100,21 +114,6 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
         }
     }, [dragging, dragDistance, swipeLeft, swipeRight]);
 
-    // Filter effect
-    /*
-    useEffect(() => {
-        const {roles, rank, ageRange} = filters;
-        const filtered = profiles.filter(profile => {
-            const roleMatch = roles.length === 0 || roles.some(role => profile.roles.includes(role));
-            const rankMatch = !rank || profile.rank === rank;
-            const ageMatch = profile.age >= ageRange[0] && profile.age <= ageRange[1];
-            return roleMatch && rankMatch && ageMatch;
-        });
-        setFilteredProfiles(filtered);
-    }, [filters, profiles]);
-    */
-
-    // Mouse event listeners
     useEffect(() => {
         if (dragging) {
             window.addEventListener('mousemove', handleMouseMove);
@@ -127,7 +126,6 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
         };
     }, [dragging, handleMouseMove, handleMouseUp]);
 
-    // Keyboard event listeners
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'ArrowRight') {
@@ -170,22 +168,24 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
                                 }}
                                 onMouseDown={handleMouseDown}
                             >
+                                {console.log(profile)}
                                 <ProfileCard
-					name={profile.name}
-					age={profile.age}
-					image={profile.image}
-					bio={profile.bio}
-					pronouns={profile.pronouns}
-					riotId={profile.riotId}
-					discordId={profile.discordId}
-					description={profile.description}
-				    roles={profile.roles}
+                                    name={profile.name}
+                                    age={profile.age}
+                                    image={profile.image}
+                                    bio={profile.bio}
+                                    pronouns={profile.pronouns}
+                                    riotId={profile.riotId}
+                                    discordId={profile.discordId}
+                                    description={profile.description || ''}
+                                    roles={profile.roles}
                                     rank={profile.rank}
                                 />
                             </div>
                         );
                     })
                 ) : (
+
                     <div className={classes.noMoreProfiles}>
                         No more profiles to display.
                     </div>
