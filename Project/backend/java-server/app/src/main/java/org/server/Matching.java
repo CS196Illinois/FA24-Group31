@@ -1,17 +1,34 @@
 package org.server;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Matching {
   private List<User> matchList = new ArrayList<>();
+  private Map<String, Integer> ranks = new HashMap<>();
 
   public boolean fillMatchList() {
     matchList.clear();
     PostgreSQLController pgController = new PostgreSQLController();
     try {
       matchList = pgController.getUsers();
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+      return false;
+    }
+    return true;
+  }
+
+  public boolean newFillMatchList(int minAge, int maxAge, String[] ranks, String[] roles) {
+    matchList.clear();
+    PostgreSQLController pgController = new PostgreSQLController();
+    try {
+      matchList = pgController.filterWithSQL(minAge, maxAge, ranks, roles);
     } catch (SQLException e) {
       System.out.println(e.getMessage());
       return false;
