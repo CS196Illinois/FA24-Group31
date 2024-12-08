@@ -222,37 +222,36 @@ public class PostgreSQLController {
       String sqlPrivate = "SELECT * FROM private";
       String sqlPublic = "SELECT * FROM public";
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
-           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
 
         ResultSet priv = stmtPrivate.executeQuery();
         ResultSet pub = stmtPublic.executeQuery();
 
         while (priv.next() && pub.next()) {
-          if (priv.getArray("one_way_matched") == null) {
+          if (priv.getArray("one_way_matched") == null) {}
 
-          }
           PrivateUser privateUser =
-                  new PrivateUser(
-                          priv.getString("discord_id"),
-                          priv.getDate("dob").toString(),
-                          priv.getArray("one_way_matched") != null
-                            ? (String[]) priv.getArray("one_way_matched").getArray()
-                                  : new String[0],
-                          priv.getArray("two_way_matched") != null
-                          ? (String[]) priv.getArray("two_way_matched").getArray()
-                          :new String[0]);
+              new PrivateUser(
+                  priv.getString("discord_id"),
+                  priv.getDate("dob").toString(),
+                  priv.getArray("one_way_matched") != null
+                      ? (String[]) priv.getArray("one_way_matched").getArray()
+                      : new String[0],
+                  priv.getArray("two_way_matched") != null
+                      ? (String[]) priv.getArray("two_way_matched").getArray()
+                      : new String[0]);
 
           PublicUser publicUser =
-                  new PublicUser(
-                          pub.getString("discord_id"),
-                          pub.getString("riot_id"),
-                          pub.getString("first_name"),
-                          pub.getString("last_name"),
-                          (String[]) pub.getArray("pronouns").getArray(),
-                          pub.getString("description"),
-                          (String[]) pub.getArray("roles").getArray(),
-                          pub.getString("rank"),
-                          pub.getString("image"));
+              new PublicUser(
+                  pub.getString("discord_id"),
+                  pub.getString("riot_id"),
+                  pub.getString("first_name"),
+                  pub.getString("last_name"),
+                  (String[]) pub.getArray("pronouns").getArray(),
+                  pub.getString("description"),
+                  (String[]) pub.getArray("roles").getArray(),
+                  pub.getString("rank"),
+                  pub.getString("image"));
 
           users.add(new User(privateUser, publicUser));
         }
@@ -278,7 +277,7 @@ public class PostgreSQLController {
   }
 
   /**
-   * Updates the user in the database.
+   * Gets an access token.
    *
    * @param discordID the discord ID of the user
    * @return the user's access token
@@ -434,7 +433,7 @@ public class PostgreSQLController {
         stmtAuth.setString(1, sessionToken);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
-          return auth.getString("discord_id");
+          return auth.getString(1);
         }
         connection.commit();
       } catch (SQLException e) {
@@ -455,6 +454,34 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("Invalid Session Token");
   }
 
+  public void setRefreshToken(String discordId, String refreshToken) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlAuth = "UPDATE auth SET refresh_token = ? WHERE discord_id = ?";
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
+        stmtAuth.setString(1, refreshToken);
+        stmtAuth.setString(2, discordId);
+        stmtAuth.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+  }
+
   /**
    * Updates the user in the database.
    *
@@ -471,7 +498,7 @@ public class PostgreSQLController {
         stmtAuth.setString(1, discordId);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
-          return auth.getString("refresh_token");
+          return auth.getString(1);
         }
         connection.commit();
       } catch (SQLException e) {
