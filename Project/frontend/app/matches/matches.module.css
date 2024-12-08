@@ -1,0 +1,141 @@
+/* app/matches/matches.module.css */
+.matchesContainer {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: linear-gradient(to bottom, rgba(73, 141, 224, 0.874), rgba(170, 63, 118, 0.4));
+    min-height: calc(100vh - 64px);
+}
+
+.matchesSection {
+    margin-bottom: 3rem;
+}
+
+.sectionTitle {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 0.5rem;
+}
+
+.matchesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.matchCard {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.matchCard:hover {
+    transform: translateY(-4px);
+}
+
+.mutualMatch {
+    border: 2px solid #4CAF50;
+}
+
+.oneWayMatch {
+    border: 2px solid #2196F3;
+}
+
+.matchImageContainer {
+    position: relative;
+    width: 100%;
+    height: 200px;
+}
+
+.matchImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mutualBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #4CAF50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.matchInfo {
+    padding: 1rem;
+}
+
+.matchName {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.matchAge {
+    color: #666;
+    margin: 0 0 0.5rem 0;
+}
+
+.matchRank {
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 0.5rem 0;
+}
+
+.matchRoles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.roleTag {
+    background: #f0f0f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.matchIds {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.matchBio {
+    font-size: 0.875rem;
+    color: #444;
+    line-height: 1.4;
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    color: #ff4444;
+    font-size: 1.25rem;
+    background: rgba(255, 68, 68, 0.1);
+    border-radius: 8px;
+    margin: 2rem;
+}
+
+.noMatches {
+    text-align: center;
+    color: white;
+    font-size: 1.125rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}

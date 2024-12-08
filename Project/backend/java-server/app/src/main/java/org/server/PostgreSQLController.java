@@ -9,10 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class is responsible for controlling the PostgreSQL database. It can deal with user data.
@@ -368,17 +365,37 @@ public class PostgreSQLController {
   }
 
   public boolean existsInOneWay(String discordId, String matchedId) {
-      Connection connection = null;
+    Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
-         String sql = "SELECT * FROM private WHERE ? = ANY(one_way_matched) AND discord_id = ?";
+      String sql = "SELECT * FROM private WHERE ? = ANY(one_way_matched) AND discord_id = ?";
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, discordId);
-        stmt.setString(2, matchedId);
+        stmt.setString(1, matchedId);
+        stmt.setString(2, discordId);
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
           return true;
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return false;
+  }
+
   public void updateUserPreferences(UserPrefs prefs) {
     Connection connection = null;
     try {
@@ -408,7 +425,6 @@ public class PostgreSQLController {
             connection.rollback();
             throw e;
           }
-
         }
         connection.commit();
       } catch (SQLException e) {
@@ -426,8 +442,6 @@ public class PostgreSQLController {
         System.err.println(e.getMessage());
       }
     }
-        return false;
-
   }
 
   public boolean updateOneWayMatched(String discordId, String matchedId) {
@@ -435,7 +449,8 @@ public class PostgreSQLController {
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
-      String sql = "UPDATE private SET one_way_matched = one_way_matched || ARRAY[?] WHERE discord_id = ?";
+      String sql =
+          "UPDATE private SET one_way_matched = one_way_matched || ARRAY[?] WHERE discord_id = ?";
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
         stmt.setString(1, matchedId);
         stmt.setString(2, discordId);
@@ -460,15 +475,47 @@ public class PostgreSQLController {
     return true;
   }
 
+  public List<String> getTwoWayMatched(String discordId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql = "SELECT two_way_matched FROM private WHERE discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, discordId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          return Arrays.asList((String[]) rs.getArray("two_way_matched").getArray());
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return new ArrayList<>();
+  }
+
   public boolean deleteOneWayMatched(String discordId, String matchedId) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
-      String sql = "UPDATE private SET one_way_matched = array_remove(one_way_matched, ?) WHERE discord_id = ?";
+      String sql =
+          "UPDATE private SET one_way_matched = array_remove(one_way_matched, ?) WHERE discord_id = ?";
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setString(1, discordId);
-        stmt.setString(2, matchedId);
+        stmt.setString(1, matchedId);
+        stmt.setString(2, discordId);
         stmt.executeUpdate();
         connection.commit();
       } catch (SQLException e) {
@@ -490,15 +537,80 @@ public class PostgreSQLController {
     return true;
   }
 
+  public String getDiscordIdfromRiot(String riotId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql = "SELECT discord_id FROM public WHERE riot_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, riotId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          return rs.getString("discord_id");
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return null;
+  }
+
+  public boolean containsTwoWayMatched(String target, String match) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql = "SELECT * FROM private WHERE ? = ANY(two_way_matched) AND discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, target);
+        stmt.setString(2, match);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          return true;
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return false;
+  }
+
   public boolean updateTwoWayMatched(String discordId, String matchedId) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
-      String sql1 = "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
-      String sql2 = "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
+      String sql1 =
+          "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
+      String sql2 =
+          "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
       try (PreparedStatement stmt = connection.prepareStatement(sql1);
-      PreparedStatement stmt2 = connection.prepareStatement(sql2)) {
+          PreparedStatement stmt2 = connection.prepareStatement(sql2)) {
         stmt.setString(1, matchedId);
         stmt.setString(2, discordId);
         stmt2.setString(1, discordId);
@@ -523,7 +635,6 @@ public class PostgreSQLController {
       }
     }
     return true;
-
   }
 
   /**

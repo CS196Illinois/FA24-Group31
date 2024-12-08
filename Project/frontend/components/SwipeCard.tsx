@@ -5,7 +5,8 @@ import {Container, Button, Card, Image, Text, Badge, Group} from '@mantine/core'
 import styles from './SwipeCard.module.css';
 
 interface User {
-    discord_id: string;
+    riotId: string,
+    discordId: string,
     name: string;
     pronouns: string[];
     bio: string;
@@ -16,7 +17,16 @@ interface User {
 }
 
 export default function SwipeCard() {
-    const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<User | null>(null);
+    const [riotId, setRiotId] = useState<User | null>(null);
+    const [discordId, setDiscordId] = useState<User | null>(null);
+    const [name, setName] = useState<User | null>(null);
+    const [pronouns, setPronouns] = useState<User | null>(null);
+    const [bio, setBio] = useState<User | null>(null);
+    const [roles, setRoles] = useState<User | null>(null);
+    const [rank, setRank] = useState<User | null>(null);
+    const [image, setImage] = useState<User | null>(null);
+    const [age, setAge] = useState<User | null>(null);
     const [swipeDirection, setSwipeDirection] = useState<string | null>(null);
 
     const fetchNextUser = () => {
@@ -30,6 +40,15 @@ export default function SwipeCard() {
             .then((res) => res.json())
             .then((data) => {
                 setUser(data);
+		setRiotId(data.riotId);
+		setDiscordId(data.discordId);
+		setName(data.name);
+		setPronouns(data.pronouns);
+		setBio(data.bio);
+		setRoles(data.roles);
+		setRank(data.rank);
+		setImage(data.image);
+		setAge(data.age);
                 setSwipeDirection(null); // Reset swipe direction
             })
             .catch((err) => {
@@ -41,7 +60,28 @@ export default function SwipeCard() {
         fetchNextUser();
     }, []);
 
+    const preferences = () => {
+	    window.location.href = '/preferences';
+    }
+
     const handleSwipe = (direction: 'left' | 'right') => {
+	if (direction == 'right') {
+	    fetch('http://10.195.197.251:8080/api/v1/update_matches', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({sessionToken: localStorage.getItem("sessionToken"), matchedId: riotId})
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setUser(data);
+                setSwipeDirection(null); // Reset swipe direction
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+	}
         setSwipeDirection(direction);
         setTimeout(() => {
             setUser(null); // Remove the card from the DOM
@@ -88,28 +128,31 @@ export default function SwipeCard() {
                 >
                     <Card shadow="sm" padding="lg" style={{width: '100%', marginBottom: '20px'}}>
                         <Card.Section>
-                            <Image src={user.image} height={160} alt={`${user.name}`}/>
+                            <Image src={image} height={160} alt={`${name}`}/>
                         </Card.Section>
                         <Group position="apart" style={{marginBottom: 5, marginTop: '10px'}}>
-                            <Text weight={800}>{user.name}</Text>
-                        	<Text weight={800}>{user.age}</Text>
+                            <Text weight={800}>{name}</Text>
+                        	<Text weight={800}>{age}</Text>
+                            <Text weight={800}>{riotId}</Text>
+                            <Text weight={800}>{discordId}</Text>
                         </Group>
-                        <Text size="sm" style={{color: '#555', lineHeight: 1.5}}>
-                            {user.bio}
+                        <Text size="sm" style={{color: '#555', lineHeight: 1}}>
+                            {bio}
                         </Text>
                         <Group spacing="xs" style={{marginTop: '10px'}}>
 			<Badge color="pink" variant="light">
-                                {user.rank}
+                                {rank}
                             </Badge>
 
-                            {user.pronouns.map((pronoun) => (
-                                <Badge key={pronoun} color="blue" variant="light">
-                                    {pronoun}
+			    {console.log(pronouns)}
+                            {pronouns.map((pronouns) => (
+                                <Badge key={pronouns} color="blue" variant="light">
+                                    {pronouns}
                                 </Badge>
                             ))}
                         </Group>
                         <Group spacing="xs" style={{marginTop: '10px'}}>
-                            {user.roles.map((role) => (
+                            {roles.map((role) => (
                                 <Badge key={role} color="green" variant="light">
                                     {role}
                                 </Badge>
@@ -130,6 +173,11 @@ export default function SwipeCard() {
                     Swipe Right
                 </Button>
             </Group>
+		<Button className={styles.button + ' ' + styles.blue} style={{marginTop: '20px'}}
+                        onClick={preferences}>
+                    Set Preferences
+                </Button>
+
         </Container>
     );
 }
