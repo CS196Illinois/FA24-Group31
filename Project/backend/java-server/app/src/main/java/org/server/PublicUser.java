@@ -1,8 +1,13 @@
 package org.server;
 
+/**
+ * This class represents a public user.
+ *
+ * @author adhit2
+ */
 public class PublicUser {
   private String discordId;
-  private String riotId;
+  String riotId;
   private String firstName;
   private String lastName;
   private String[] pronouns;
@@ -11,7 +16,30 @@ public class PublicUser {
   private String rank;
   private String image;
 
-  public PublicUser(String discordId, String riotId, String firstName, String lastName, String[] pronouns, String description, String[] roles, String rank, String image) {
+  /**
+   * Constructs a new {@link PublicUser} with the specified discord ID, riot ID, first name, last
+   * name, pronouns, description, roles, rank, and image.
+   *
+   * @param discordId the discord ID
+   * @param riotId the riot ID
+   * @param firstName the first name
+   * @param lastName the last name
+   * @param pronouns the pronouns
+   * @param description the description
+   * @param roles the roles
+   * @param rank the rank
+   * @param image the image
+   */
+  public PublicUser(
+      String discordId,
+      String riotId,
+      String firstName,
+      String lastName,
+      String[] pronouns,
+      String description,
+      String[] roles,
+      String rank,
+      String image) {
     this.discordId = discordId;
     this.riotId = riotId;
     this.firstName = firstName;
@@ -22,6 +50,9 @@ public class PublicUser {
     this.rank = rank;
     this.image = image;
   }
+
+  /** Constructs a new {@link PublicUser}. */
+  public PublicUser() {}
 
   public String getDiscordId() {
     return discordId;
