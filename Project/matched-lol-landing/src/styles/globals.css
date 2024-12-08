@@ -1,0 +1,72 @@
+/* styles/globals.css */
+
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+html,
+body {
+	max-width: 100vw;
+	overflow-x: hidden;
+	height: 100%;
+}
+
+body {
+	font-family:
+		"Comfortaa",
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		"Helvetica Neue",
+		Arial,
+		sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+input,
+button {
+	font-family: inherit;
+}
+
+input:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(73, 141, 224, 0.2);
+}
+
+button {
+	transition: all 0.2s ease;
+}
+
+::selection {
+	background: rgba(73, 141, 224, 0.2);
+	color: white;
+}
+
+/* Remove autofill background color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+	-webkit-box-shadow: 0 0 0px 1000px white inset;
+	transition: background-color 5000s ease-in-out 0s;
+}
+
+input,
+button,
+textarea,
+select {
+	font-family: "Comfortaa", sans-serif;
+}
+/* Optional - if you want to prevent the page from being scrollable when it's not needed */
+#__next {
+	height: 100%;
+}
