@@ -4,6 +4,8 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+
+import com.google.gson.JsonParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,11 +55,13 @@ public class LoginRoutes {
    * @return the response entity containing whether the login was successful and the session token
    */
   @PostMapping(path = "/api/v1/login")
-  public ResponseEntity<ReturnValue> login(@RequestBody JsonObject code)
+  public ResponseEntity<ReturnValue> login(@RequestBody String code)
       throws IOException, ExecutionException, InterruptedException {
     PostgreSQLController pgController = new PostgreSQLController();
     DiscordOps discordOps = new DiscordOps();
-    OAuth2AccessToken tr = discordOps.getTokens(code.get("code").getAsString());
+    JsonObject json = JsonParser.parseString(code).getAsJsonObject();
+    code = json.get("code").getAsString();
+    OAuth2AccessToken tr = discordOps.getTokens(code);
     String discordId = discordOps.getDiscordId(tr.getAccessToken());
     String sessionToken = pgController.doesUserExist(discordId);
     if (sessionToken != null) {

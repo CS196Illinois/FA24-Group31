@@ -1,4 +1,4 @@
-// app/loading-screen/page.tsx
+// Add an empty dependency array here
 'use client'
 
 import {useState, useEffect} from 'react'
@@ -41,7 +41,6 @@ export default function LoadingScreen() {
                     body: JSON.stringify({code: accessToken}),
                 });
 
-
                 const data = await response.json();
                 localStorage.setItem('sessionToken', data.sessionToken);
                 if (data.success === true) {
@@ -62,7 +61,7 @@ export default function LoadingScreen() {
         fetchData()
 
         return () => clearInterval(textInterval)
-    }, [])
+    }, []) // Add an empty dependency array here
 
     return (
         <div className={styles.container}>
