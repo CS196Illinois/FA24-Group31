@@ -82,27 +82,12 @@ public class PostgreSQLController {
   }
 
   /**
-   * Creates a new user in the database.
+   * Creates a new auth row in the database.
    *
-   * @param discordId the Discord ID of the user
-   * @param riotId the Riot ID of the user
-   * @param firstName the first name of the user
-   * @param lastName the last name of the user
-   * @param pronouns the pronouns of the user
-   * @param description the description of the user
-   * @param roles the roles that the user plays
+   * @param user the user to create:w
+   *             
    */
-  public void createUser(
-      String discordId,
-      String riotId,
-      String firstName,
-      String lastName,
-      String[] pronouns,
-      String description,
-      String[] roles,
-      String rank,
-      String image,
-      LocalDate dob) {
+  public void createUser(User user) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
@@ -121,19 +106,20 @@ public class PostgreSQLController {
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
 
-        stmtPrivate.setString(1, discordId);
-        stmtPrivate.setDate(2, Date.valueOf(dob));
+        stmtPrivate.setString(1, user.getPublicUser().getDiscordId());
+        stmtPrivate.setDate(2, Date.valueOf(user.getPrivateUser().getDoB()));
         stmtPrivate.executeUpdate();
 
-        stmtPublic.setString(1, discordId);
-        stmtPublic.setString(2, riotId);
-        stmtPublic.setString(3, firstName);
-        stmtPublic.setString(4, lastName);
-        stmtPublic.setArray(5, connection.createArrayOf("text", pronouns));
-        stmtPublic.setString(6, description);
-        stmtPublic.setArray(7, connection.createArrayOf("text", roles));
-        stmtPublic.setString(8, rank);
-        stmtPublic.setString(9, image);
+        stmtPublic.setString(1, user.getPublicUser().getDiscordId());
+        stmtPublic.setString(2, user.getPublicUser().getRiotId());
+        stmtPublic.setString(3, user.getPublicUser().getFirstName());
+        stmtPublic.setString(4, user.getPublicUser().getLastName());
+        stmtPublic.setArray(
+            5, connection.createArrayOf("text", user.getPublicUser().getPronouns()));
+        stmtPublic.setString(6, user.getPublicUser().getDescription());
+        stmtPublic.setArray(7, connection.createArrayOf("text", user.getPublicUser().getRoles()));
+        stmtPublic.setString(8, user.getPublicUser().getRank());
+        stmtPublic.setString(9, user.getPublicUser().getImage());
         stmtPublic.executeUpdate();
 
         connection.commit();
@@ -550,6 +536,41 @@ public class PostgreSQLController {
         System.err.println(e.getMessage());
       }
     }
+  }
+
+  public boolean hasUserBeenCreated(String discordID) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "SELECT * FROM private WHERE discord_id = ?";
+      String sqlPublic = "SELECT * FROM public WHERE discord_id = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
+        stmtPrivate.setString(1, discordID);
+        stmtPublic.setString(1, discordID);
+        ResultSet priv = stmtPrivate.executeQuery();
+        ResultSet pub = stmtPublic.executeQuery();
+        if (priv.next() && pub.next()) {
+          return true;
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return false;
   }
 
   /** Tests the connection to the database. */

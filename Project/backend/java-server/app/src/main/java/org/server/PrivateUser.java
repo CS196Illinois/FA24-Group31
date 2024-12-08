@@ -41,6 +41,10 @@ public class PrivateUser {
     return Period.between(dob, LocalDate.now()).getYears();
   }
 
+  public LocalDate getDoB() {
+    return dob;
+  }
+
   public void setDoB(String dob) {
     this.dob = LocalDate.parse(dob);
   }

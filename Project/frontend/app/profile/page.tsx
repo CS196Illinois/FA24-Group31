@@ -1,21 +1,39 @@
 // Profile edit page
 // Should be able to customize your own aspects but there's some stuff pre-filled out already
 'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { MantineProvider, TextInput, Container, Button, Text, MultiSelect, Select, FileInput, FileInputProps} from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { HeaderSimple } from '../header';
 
 import '@mantine/dates/styles.css';
 
 // Define the Profile component
 export default function Profile() {
+	const [token, setToken] = useState<string>('');
+	const [discord, setDiscord] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>(''); // Store first name
+  const [lastName, setLastName] = useState<string>(''); // Store last name
+  const [dob, setDob] = useState<Date>(null)
+  const [riotId, setRiotId] = useState<string>(''); // Store Riot ID
+  const [pronouns, setPronouns] = useState<string[]>([]);
+  const [description, setDescription] = useState<string>('');
+  const [roles, setRoles] = useState<string[]>([]);
+  const [rank, setRank] = useState<string>('');
+  const [profilePicture, setProfilePicture] = useState<File>(null);
+  const [b64ProfilePicture, setB64ProfilePicture] = useState<string>('');
+  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; riotId?: string, dob?: string }>({}); // Store validation error messages
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true); // Disable submit button initially
+
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null); // Ref to store timeout for debouncing
+
 	let discordCall = false;
 	useEffect(() => {
 	  if (typeof window !== "undefined") {
 		if (discordCall == false) {
 			discordCall = true;
 			const token = localStorage.getItem("sessionToken");
+			setToken(token);
 			fetch('http://10.195.197.251:8080/api/v1/username', {
 				method: 'POST',
 				body: JSON.stringify({session_token: token}),
@@ -34,22 +52,6 @@ export default function Profile() {
 
 		}
 	}, []);
-
-	const [discord, setDiscord] = useState<string>('');
-  const [firstName, setFirstName] = useState<string>(''); // Store first name
-  const [lastName, setLastName] = useState<string>(''); // Store last name
-  const [dob, setDob] = useState<Date>(null)
-  const [riotId, setRiotId] = useState<string>(''); // Store Riot ID
-  const [pronouns, setPronouns] = useState<string[]>([]);
-  const [description, setDescription] = useState<string>('');
-  const [roles, setRoles] = useState<string[]>([]);
-  const [rank, setRank] = useState<string>('');
-  const [profilePicture, setProfilePicture] = useState<File>(null);
-  const [b64ProfilePicture, setB64ProfilePicture] = useState<string>('');
-  const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; riotId?: string, dob?: string }>({}); // Store validation error messages
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true); // Disable submit button initially
-
-  const debounceTimeout = useRef<NodeJS.Timeout | null>(null); // Ref to store timeout for debouncing
 
   // Validation function for alphabetic names (first and last)
   const validateName = (name: string) => {
@@ -238,21 +240,23 @@ const rankOptions: readonly RolesOption[] = [
 
   function createAccountRequest() {
     // Send the form data to the server
-    const formData = new FormData();
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('dob', dob.toISOString().slice(0, 10));
-    formData.append('riot_id', riotId);
-    formData.append('pronouns', JSON.stringify(pronouns));
-    formData.append('description', description);
-    formData.append('roles', JSON.stringify(roles));
-    formData.append('rank', rank);
-    formData.append('b64_profile_pic',b64ProfilePicture);
-    console.log(formData);
+    const jsonBody = JSON.stringify({
+      first_name: firstName,
+      last_name: lastName,
+      dob: dob.toISOString().slice(0, 10),
+      riot_id: riotId,
+      pronouns: pronouns,
+      description: description,
+      roles: roles,
+      rank: rank,
+      image: b64ProfilePicture,
+      session_token: token
+    });
+	console.log(jsonBody);
 
-    fetch('http://10.195.197.251:8080/api/v1/users/create_user', {
+    fetch('http://10.195.197.251:8080/api/v1/create_user', {
       method: 'POST',
-      body: formData,
+      body: jsonBody,
       headers: {
 	      'Content-Type': 'application/json'
       }
@@ -260,22 +264,23 @@ const rankOptions: readonly RolesOption[] = [
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        // Redirect to the profile page
-        //window.location.href = '/matching';
+	if (data.status == 201) {
+        	window.location.href = '/matching';
+	}
       })
       .catch((err) => {
+	console.error(data.status);
         console.error(err);
       });
   }
 
   return (
     <MantineProvider>
-      <HeaderSimple />
       <Container
         size="xs"
         style={{
           display: 'flex',
-          justifyContent: 'end',
+          justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
           height: '95vh',

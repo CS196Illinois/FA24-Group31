@@ -1,13 +1,11 @@
 package org.server;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import com.google.gson.JsonPrimitive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,5 +37,46 @@ public class ProfileRoutes {
     JsonObject json = new JsonObject();
     json.addProperty("discord_username", discordUsername);
     return new ResponseEntity<>(json, HttpStatus.OK);
+  }
+
+  @PostMapping("/api/v1/create_user")
+  public ResponseEntity<Boolean> createUser(@RequestBody JsonObject jsonObject)
+      throws IOException, ExecutionException, InterruptedException {
+    PostgreSQLController pgController = new PostgreSQLController();
+    String sessionToken = jsonObject.get("session_token").getAsString();
+    String discordId;
+    try {
+      discordId = pgController.getDiscordId(sessionToken);
+    } catch (Exception e) {
+      return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+    }
+    if (pgController.hasUserBeenCreated(discordId)) {
+      return new ResponseEntity<>(false, HttpStatus.CONFLICT);
+    }
+    PublicUser publicUser =
+        new PublicUser(
+            discordId,
+            jsonObject.get("riot_id").getAsString(),
+            jsonObject.get("first_name").getAsString(),
+            jsonObject.get("last_name").getAsString(),
+            toArray(jsonObject.get("pronouns").getAsJsonArray()),
+            jsonObject.get("description").getAsString(),
+            toArray(jsonObject.get("roles").getAsJsonArray()),
+            jsonObject.get("rank").getAsString(),
+            jsonObject.get("image").getAsString());
+    PrivateUser privateUser =
+        new PrivateUser(
+            discordId, jsonObject.get("dob").getAsString(), new String[0], new String[0]);
+    User user = new User(privateUser, publicUser);
+    pgController.createUser(user);
+    return new ResponseEntity<>(true, HttpStatus.CREATED);
+  }
+
+  private String[] toArray(JsonArray jsonArray) {
+    String[] array = new String[jsonArray.size()];
+    for (int i = 0; i < jsonArray.size(); i++) {
+      array[i] = jsonArray.get(i).getAsString();
+    }
+    return array;
   }
 }
