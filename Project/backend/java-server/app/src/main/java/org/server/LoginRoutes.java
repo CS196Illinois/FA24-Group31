@@ -4,8 +4,6 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.springframework.http.ResponseEntity;
 
@@ -76,23 +74,40 @@ public class LoginRoutes {
     }
   }
 
-  @PostMapping(path = "/api/v1/matching")
-  public ResponseEntity<List<User>> matching(@RequestParam int minAge, @RequestParam int maxAge, @RequestParam String[] ranks, @RequestParam String[] roles) throws IOException {
-    Matching matcher = new Matching();
-    boolean success = matcher.fillMatches(minAge, maxAge, ranks, roles);
-    if (success) {
-      List<User> matches = matcher.getMatchList();
-      return ResponseEntity.ok(matches);
-    } else {
-      return ResponseEntity.ok(new ArrayList<>());
+  public class matchUpdate {
+    private String sessionToken;
+    private String matchedId;
+
+    public matchUpdate(String sessionToken, String matchedId) {
+      this.sessionToken = sessionToken;
+      this.matchedId = matchedId;
+    }
+
+    public String getMatchedId() {
+      return matchedId;
+    }
+
+    public void setMatchedId(String matchedId) {
+      this.matchedId = matchedId;
+    }
+
+    public String getSessionToken() {
+      return sessionToken;
+    }
+
+    public void setSessionToken(String sessionToken) {
+      this.sessionToken = sessionToken;
     }
   }
 
   @PostMapping(path = "/api/v1/update_matches")
-  public ResponseEntity<ReturnValue> updateMatches(@RequestParam String userId, @RequestParam String matchedId) {
+  public ResponseEntity<Boolean> updateMatches(@RequestBody matchUpdate matchUpdate) {
     OneAndTwoWayMatches oneAndTwoWayMatches = new OneAndTwoWayMatches();
-    boolean success = oneAndTwoWayMatches.updateMatches(userId, matchedId);
-    return ResponseEntity.ok(new ReturnValue(success, ""));
+    PostgreSQLController pgController = new PostgreSQLController();
+    boolean success =
+        oneAndTwoWayMatches.updateMatches(
+            pgController.getDiscordId(matchUpdate.getSessionToken()),
+            pgController.getDiscordIdfromRiot(matchUpdate.getMatchedId()));
+    return ResponseEntity.ok(success);
   }
-
 }
