@@ -60,13 +60,13 @@ public class MatchingRoutes {
     PostgreSQLController pgController = new PostgreSQLController();
     String sessionToken = token.get("session_token").getAsString();
     String discordId = pgController.getDiscordId(sessionToken);
+    pgController.resetSeen(discordId);
     if (pgController.hasUserBeenCreated(discordId)) {
       try {
         Matching matching = new Matching(sessionToken);
         matching.newFillMatchList();
         List<User> matchList = matching.getMatchList();
         if (matchList.isEmpty()) {
-          pgController.resetSeen(discordId);
           matching.newFillMatchList();
           matchList = matching.getMatchList();
           if (matchList.isEmpty()) {
