@@ -6,6 +6,7 @@ import FilterProfiles from './components/FilterProfiles'; // Importing FilterPro
 import classes from './style.module.css'; // Importing CSS file
 import { HeaderSimple } from '../header';
 
+/*
 const profilesData = [
   {
     name: 'Alex Johnson',
@@ -53,17 +54,81 @@ const profilesData = [
     age: 30,
   },
 ];
+*/
+
+/*
+const profilesData = [
+	{
+		name: 'Alex Johnson',
+		image: 'base64 string',
+		age: 25,
+		pronouns: [],
+		bio: 'I love volibear',
+		riotId: 'Alex#5678',
+		discordId: 'AlexJ319',
+		roles: ['Top', 'Support'],
+		rank: 'Diamond',
+	},
+]
+*/
+
 
 const MatchingPage: React.FC = () => {
-  const [filters, setFilters] = useState({ roles: [], rank: '', ageRange: [18, 35] });
+const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedRanks, setSelectedRanks] = useState<string[]>([]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([18, 99]);
+  const [filters, setFilters] = useState({ roles: [], rank: '', ageRange: [18, 99] });
+  const [currentName, setCurrentName] = useState<string>('');
+  const [currentImage, setCurrentImage] = useState<string>('');
+  const [currentAge, setCurrentAge] = useState<number>(0);
+  const [currentRank, setCurrentRank] = useState<string>('');
+  const [currentPronouns, setCurrentPronouns] = useState<string[]>('');
+  const [currentRoles, setCurrentRoles] = useState<string[]>('');
+  const [currentBio, setCurrentBio] = useState<string>('');
+  const [currentRiotId, setCurrentRiotId] = useState<string>('');
+  const [currentDiscordId, setCurrentDiscordId] = useState<string>('');
+  const [nextName, setNextName] = useState<string>('');
+  const [nextImage, setNextImage] = useState<string>('');
+  const [nextAge, setNextAge] = useState<number>(0);
+  const [nextRank, setNextRank] = useState<string>('');
+  const [nextPronouns, setNextPronouns] = useState<string[]>('');
+  const [nextRoles, setNextRoles] = useState<string[]>('');
+  const [nextBio, setNextBio] = useState<string>('');
+  const [nextDiscordId, setNextDiscordId] = useState<string>('');
+
+  let profilesData = [
+	{
+		name: currentName,
+		image: currentImage,
+		age: currentAge,
+		bio: currentBio,
+		pronouns: currentPronouns,
+		riotId: currentRiotId,
+		discordId: currentDiscordId,
+		roles: currentRoles,
+		rank: currentRank,
+	},
+	{
+		name: nextName,
+		image: nextImage,
+		age: nextAge,
+		pronouns: nextPronouns,
+		bio: nextBio,
+		riotId: currentRiotId,
+		discordId: nextDiscordId,
+		roles: nextRoles,
+		rank: nextRank,
+	},
+];
+
+
 
   return (
     <div>
       <HeaderSimple />
       <div className={classes.homepageContainer}>
-      	<FilterProfiles onFilterChange={setFilters} />
-        <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
-        <SwipeProfiles profiles={profilesData} filters={filters} />
+      	<FilterProfiles selectedRoles={selectedRoles} setSelectedRoles={setSelectedRoles} selectedRanks={selectedRanks} setSelectedRanks={setSelectedRanks} ageRange={ageRange} setAgeRange={setAgeRange} filters={filters} setFilters={setFilters} currentName={currentName} setCurrentName={setCurrentName} currentImage={currentImage} setCurrentImage={setCurrentImage} currentAge={currentAge} setCurrentAge={setCurrentAge} currentRank={currentRank} setCurrentRank={setCurrentRank} currentRoles={currentRoles} setCurrentRoles={setCurrentRoles} currentBio={currentBio} setCurrentBio={setCurrentBio} currentRiotId={currentRiotId} setCurrentRiotId={setCurrentRiotId} currentDiscordId={currentDiscordId} setCurrentDiscordId={setCurrentDiscordId} nextName={nextName} setNextName={setNextName} nextImage={nextImage} setNextImage={setNextImage} nextAge={nextAge} setNextAge={setNextAge} nextRank={nextRank} setNextRank={setNextRank} nextRoles={nextRoles} setNextRoles={setNextRoles} nextBio={nextBio} setNextBio={setNextBio} nextDiscordId={nextDiscordId} setNextDiscordId={setNextDiscordId} currentPronouns={currentPronouns} setCurrentPronouns={setCurrentPronouns} nextPronouns={nextPronouns} setNextPronouns={setNextPronouns} />
+	<SwipeProfiles profiles={profilesData} filter={filters} />
       </div>
     </div>
   );
