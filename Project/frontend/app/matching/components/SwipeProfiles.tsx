@@ -7,7 +7,16 @@ interface SwipeProfilesProps {
     name: string;
     image: string;
     bio: string;
-  }[]; // Update the type for profiles
+    pronouns: string;
+    riotId: string;
+    discordId: string;
+    description: string;
+    roles: string[]; // Array of image URLs
+    rank: {
+      title: string; // Rank as a string
+      image: string; // Rank image URL
+    };
+  }[];
 }
 
 const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
@@ -116,7 +125,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
                 : isCurrent && swipeDirection === 'right'
                 ? 400 // Adjust this value to fit your card width
                 : 0;
-
+  
             return (
               <div
                 key={index}
@@ -129,11 +138,17 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
                 }}
                 onMouseDown={handleMouseDown}
               >
-          <ProfileCard
-            name={profile.name}
-            image={profile.image}
-            bio={profile.bio}
-          />
+                <ProfileCard
+                  name={profile.name}
+                  image={profile.image}
+                  bio={profile.bio}
+                  pronouns={profile.pronouns}
+                  riotId={profile.riotId}
+                  discordId={profile.discordId}
+                  description={profile.description}
+                  roles={profile.roles}
+                  rank={profile.rank}
+                />
               </div>
             );
           })
@@ -143,7 +158,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
           </div>
         )}
       </div>
-
+  
       {/* Button Container Positioned at the Bottom */}
       {currentIndex < profiles.length && (
         <div className={classes.buttonContainer}>
@@ -151,13 +166,13 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
             onClick={swipeLeft}
             className={classes.swipeButtonLeft}
           >
-            Swipe Left
+            ⟨
           </button>
           <button
             onClick={swipeRight}
             className={classes.swipeButtonRight}
           >
-            Swipe Right
+            ⟩
           </button>
         </div>
       )}
