@@ -1,0 +1,92 @@
+/* components/SwipeCard.module.css */
+.swipe-card {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    overflow: hidden;
+    border-radius: 15px;
+    background-color: #ffffff;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.swipe-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.swipe-card h1 {
+    font-size: 28px;
+    margin: 15px;
+    color: #333;
+    text-align: center;
+}
+
+.swipe-card p {
+    margin: 15px;
+    color: #666;
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.swipe-left {
+    animation: swipeLeft 0.5s forwards;
+}
+
+.swipe-right {
+    animation: swipeRight 0.5s forwards;
+}
+
+@keyframes swipeLeft {
+    100% {
+        transform: translateX(-1000px);
+        opacity: 0;
+    }
+}
+
+@keyframes swipeRight {
+    100% {
+        transform: translateX(1000px);
+        opacity: 0;
+    }
+}
+
+.button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+}
+
+.button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+.button.red {
+    background-color: #dc3545;
+}
+
+.button.red:hover {
+    background-color: #c82333;
+}
+
+.button.green {
+    background-color: #28a745;
+}
+
+.button.green:hover {
+    background-color: #218838;
+}
