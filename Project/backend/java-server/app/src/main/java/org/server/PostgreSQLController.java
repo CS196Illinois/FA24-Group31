@@ -196,6 +196,63 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("User not found");
   }
 
+  public List<User> filterWithSQL(int minAge, int maxAge, String[] ranks, String[] roles) throws SQLException {
+    List<User> users = new ArrayList<>();
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+
+      String sql = "SELECT * FROM private JOIN public ON private.discord_id = public.discord_id WHERE EXTRACT(YEAR FROM age(private.dob)) BETWEEN ? AND ? AND public.rank = ANY(?) AND public.roles && ?";
+
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setInt(1, minAge);
+        stmt.setInt(2, maxAge);
+        stmt.setArray(3, connection.createArrayOf("text", ranks));
+        stmt.setArray(4, connection.createArrayOf("text", roles));
+
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+          PrivateUser privateUser = new PrivateUser(
+                  rs.getString("discord_id"),
+                  rs.getDate("dob").toString(),
+                  rs.getArray("one_way_matched") != null ? (String[]) rs.getArray("one_way_matched").getArray() : new String[0],
+                  rs.getArray("two_way_matched") != null ? (String[]) rs.getArray("two_way_matched").getArray() : new String[0]
+          );
+
+          PublicUser publicUser = new PublicUser(
+                  rs.getString("discord_id"),
+                  rs.getString("riot_id"),
+                  rs.getString("first_name"),
+                  rs.getString("last_name"),
+                  (String[]) rs.getArray("pronouns").getArray(),
+                  rs.getString("description"),
+                  (String[]) rs.getArray("roles").getArray(),
+                  rs.getString("rank"),
+                  rs.getString("image")
+          );
+
+          users.add(new User(privateUser, publicUser));
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return users;
+  }
+
   public List<User> getUsers() throws SQLException {
     List<User> users = new ArrayList<>();
     Connection connection = null;
