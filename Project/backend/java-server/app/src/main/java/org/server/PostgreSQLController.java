@@ -367,11 +367,24 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("Error, users not found");
   }
 
+  public boolean existsInOneWay(String discordId, String matchedId) {
+      Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+         String sql = "SELECT * FROM private WHERE ? = ANY(one_way_matched) AND discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, discordId);
+        stmt.setString(2, matchedId);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+          return true;
   public void updateUserPreferences(UserPrefs prefs) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
+
       String sqlPrivate =
           "UPDATE user_preferences SET min_age = ?, max_age = ?, ranks = ?, roles = ? WHERE session_token = ?";
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate)) {
@@ -395,6 +408,7 @@ public class PostgreSQLController {
             connection.rollback();
             throw e;
           }
+
         }
         connection.commit();
       } catch (SQLException e) {
@@ -412,6 +426,104 @@ public class PostgreSQLController {
         System.err.println(e.getMessage());
       }
     }
+        return false;
+
+  }
+
+  public boolean updateOneWayMatched(String discordId, String matchedId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql = "UPDATE private SET one_way_matched = one_way_matched || ARRAY[?] WHERE discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, matchedId);
+        stmt.setString(2, discordId);
+        stmt.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+      return false;
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return true;
+  }
+
+  public boolean deleteOneWayMatched(String discordId, String matchedId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql = "UPDATE private SET one_way_matched = array_remove(one_way_matched, ?) WHERE discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, discordId);
+        stmt.setString(2, matchedId);
+        stmt.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+      return false;
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return true;
+  }
+
+  public boolean updateTwoWayMatched(String discordId, String matchedId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sql1 = "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
+      String sql2 = "UPDATE private SET two_way_matched = two_way_matched || ARRAY[?] WHERE discord_id = ?";
+      try (PreparedStatement stmt = connection.prepareStatement(sql1);
+      PreparedStatement stmt2 = connection.prepareStatement(sql2)) {
+        stmt.setString(1, matchedId);
+        stmt.setString(2, discordId);
+        stmt2.setString(1, discordId);
+        stmt2.setString(2, matchedId);
+        stmt.executeUpdate();
+        stmt2.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+      return false;
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    return true;
+
   }
 
   /**
