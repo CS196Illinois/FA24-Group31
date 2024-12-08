@@ -34,8 +34,17 @@ export function OurMission() {
                         <Space h = "lg" />
                         <Space h = "lg" />
                         <Space h = "lg" />
-                        <Text size="md" color="pink.8"> To connect League of Legends players together and make it a friendlier game yada yada </Text>
-                        <Text size="md" color="pink.8"> insert some picture here </Text>
+                        <Text size="lg" color="pink.5" ta="center"> We strives to unite League of Legends players through shared passion and camaraderie. <b>Matched.lol</b> goes beyond just matchmaking, 
+                        it's a space where Summoners can connect, team up, and build meaningful relationships both in and out of the Rift. 
+                        Whether you're looking for a duo partner, a gaming companion, or a romantic connection, <b>Matched.lol</b> is designed to help you.
+                        Our advanced algorithms are meticulously designed to match players with similar playstyles and personalities. 
+                        Together, let’s turn every match into a meaningful bond! Don't miss out! Join hundreds of League of Legends players on this amazing platform. </Text>
+
+                        <br/>
+                        <br/>
+                        <br/>
+                        
+                        <Text size="xxl" color="pink.5" ta="center"> ♡ </Text>
 
 
                     </Container>
