@@ -1,14 +1,12 @@
 package org.server;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -85,7 +83,6 @@ public class PostgreSQLController {
    * Creates a new auth row in the database.
    *
    * @param user the user to create:w
-   *             
    */
   public void createUser(User user) {
     Connection connection = null;
