@@ -64,6 +64,10 @@ export default function SwipeCard() {
 	    window.location.href = '/preferences';
     }
 
+    const matches = () => {
+	    window.location.href = '/matches';
+    }
+
     const handleSwipe = (direction: 'left' | 'right') => {
 	if (direction == 'right') {
 	    fetch('http://10.195.197.251:8080/api/v1/update_matches', {
@@ -177,6 +181,11 @@ export default function SwipeCard() {
                         onClick={preferences}>
                     Set Preferences
                 </Button>
+		<Button className={styles.button + ' ' + styles.blue} style={{marginTop: '20px'}}
+                        onClick={matches}>
+                    See Matches
+                </Button>
+
 
         </Container>
     );
