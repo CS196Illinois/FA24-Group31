@@ -5,7 +5,6 @@ import SwipeProfiles from './components/SwipeProfiles';
 import classes from './style.module.css'; // Importing CSS file
 import { HeaderSimple } from '../header';
 
-
 const profilesData = [
   {
     name: 'Person A',
