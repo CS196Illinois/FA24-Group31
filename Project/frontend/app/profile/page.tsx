@@ -2,14 +2,24 @@
 // Should be able to customize your own aspects but there's some stuff pre-filled out already
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { MantineProvider, TextInput, Container, Button, Text } from '@mantine/core';
+import { MantineProvider, TextInput, Container, Button, Text, MultiSelect, Select, FileInput, FileInputProps} from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import { HeaderSimple } from '../header';
+
+import '@mantine/dates/styles.css';
 
 // Define the Profile component
 export default function Profile() {
   const [firstName, setFirstName] = useState<string>(''); // Store first name
   const [lastName, setLastName] = useState<string>(''); // Store last name
+  const [dob, setDob] = useState<Date | null>(null)
   const [riotId, setRiotId] = useState<string>(''); // Store Riot ID
+  const [pronouns, setPronouns] = useState<string[]>([]);
+  const [description, setDescription] = useState<string>('');
+  const [roles, setRoles] = useState<string[]>([]);
+  const [rank, setRank] = useState<string>('');
+  const [profilePicture, setProfilePicture] = useState<File>(null);
+  const [b64ProfilePicture, setB64ProfilePicture] = useState<string>('');
   const [errors, setErrors] = useState<{ firstName?: string; lastName?: string; riotId?: string }>({}); // Store validation error messages
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true); // Disable submit button initially
 
@@ -26,13 +36,13 @@ export default function Profile() {
     if (id.length < 3 || id.length > 22) {
       return 'Riot ID must be between 3 and 22 characters long, including the tag.';
     }
-    
+
     if (!id.includes('#')) {
       return 'Riot ID must contain a # separating the name and tag.';
     }
 
     const [namePart, tagPart] = id.split('#');
-    
+
     if (namePart.length < 3 || namePart.length > 16) {
       return 'The part before the # must be between 3 and 16 characters long.';
     }
@@ -80,6 +90,67 @@ export default function Profile() {
     });
   };
 
+  const handleDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDescription(value); // Allow the update first
+  };
+
+interface RolesOption {
+  readonly value: string;
+  readonly label: string;
+  readonly isFixed?: boolean;
+  readonly isDisabled?: boolean;
+}
+
+interface PronounsOption {
+  readonly value: string;
+  readonly label: string;
+  readonly isFixed?: boolean;
+  readonly isDisabled?: boolean;
+}
+
+interface RankOption {
+  readonly value: string;
+  readonly label: string;
+  readonly isFixed?: boolean;
+  readonly isDisabled?: boolean;
+}
+
+
+const pronounsOptions: readonly PronounsOption[] = [
+  // populate with pronouns
+  { value: 'he/him', label: 'He/Him' },
+  { value: 'she/her', label: 'She/Her' },
+  { value: 'they/them', label: 'They/Them' },
+  { value: 'xe/xem', label: 'Xe/Xem' },
+  { value: 'ze/zir', label: 'Ze/Zir' },
+  { value: 'other', label: 'Other' },
+];
+
+const rolesOptions: readonly RolesOption[] = [
+  // populate with league of legends roles
+  { value: 'top', label: 'Top' },
+  { value: 'jungle', label: 'Jungle' },
+  { value: 'middle', label: 'Middle' },
+  { value: 'bottom', label: 'Bottom' },
+  { value: 'support', label: 'Support' },
+];
+
+const rankOptions: readonly RolesOption[] = [
+  // populate with league of legends ranks
+  { value: 'iron', label: 'Iron' },
+  { value: 'bronze', label: 'Bronze' },
+  { value: 'silver', label: 'Silver' },
+  { value: 'gold', label: 'Gold' },
+  { value: 'platinum', label: 'Platinum' },
+  { value: 'emerald', label: 'Emerald' },
+  { value: 'diamond', label: 'Diamond' },
+  { value: 'master', label: 'Master' },
+  { value: 'grandmaster', label: 'Grandmaster' },
+  { value: 'challenger', label: 'Challenger' },
+];
+
+
   // Handle the input change event for Last Name
   const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -93,18 +164,59 @@ export default function Profile() {
     });
   };
 
+  // Handle the input change event for Profile Picture by converting to file to base64
+  const handleProfilePictureChange = (file: File | null) => {
+    if (file) {
+      const reader = new FileReader(); // Create a new FileReader
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string; // Get the base64 data
+        setB64ProfilePicture(base64); // Set the base64 data
+        setProfilePicture(file); // Set the file
+      };
+      reader.readAsDataURL(file); // Read the file as data URL
+    }
+  }
+
   // Check if all fields are valid and not empty
   useEffect(() => {
-    const isFormValid = 
-      firstName !== '' && 
-      lastName !== '' && 
-      riotId !== '' && 
-      validateName(firstName) && 
-      validateName(lastName) && 
+    const isFormValid =
+      firstName !== '' &&
+      lastName !== '' &&
+      riotId !== '' &&
+      validateName(firstName) &&
+      validateName(lastName) &&
       !validateRiotId(riotId); // Ensure Riot ID has no error message
 
     setIsSubmitDisabled(!isFormValid);
   }, [firstName, lastName, riotId]); // Revalidate when any of these fields change
+
+  function createAccountRequest() {
+    // Send the form data to the server
+    const formData = new FormData();
+    formData.append('first_name', firstName);
+    formData.append('last_name', lastName);
+    formData.append('dob', dob.toString());
+    formData.append('riot_id', riotId);
+    formData.append('pronouns', pronouns.join(','));
+    formData.append('description', description);
+    formData.append('roles', roles.join(','));
+    formData.append('rank', rank);
+    formData.append('b64_profile_pic', b64ProfilePic);
+
+    fetch('/api/v1/users/create_user', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // Redirect to the profile page
+        window.location.href = '/profile';
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
   return (
     <MantineProvider>
@@ -113,10 +225,10 @@ export default function Profile() {
         size="xs"
         style={{
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'end',
           alignItems: 'center',
           flexDirection: 'column',
-          height: '90vh',
+          height: '95vh',
         }}
       >
         <TextInput
@@ -141,6 +253,50 @@ export default function Profile() {
         {errors.lastName && ( // Show error message for Last Name
           <Text color="red" style={{ marginBottom: '10px' }}>{errors.lastName}</Text>
         )}
+        <DatePickerInput
+          label="Date of Birth"
+          placeholder="Enter your date of birth"
+          value={dob}
+          onChange={setDob}
+          required
+          // generate style make calendar header control icon smaller
+          style={{ marginBottom: '20px', width: '100%'}}
+        />
+        <MultiSelect
+          label="Pronouns"
+          placeholder="Enter your pronouns"
+          value={pronouns}
+          onChange={setPronouns}
+          data={pronounsOptions}
+          required
+          style={{ marginBottom: '20px', width: '100%' }}
+        />
+        <MultiSelect
+          label="Roles"
+          placeholder="Enter your roles"
+          value={roles}
+          onChange={setRoles}
+          data={rolesOptions}
+          required
+          style={{ marginBottom: '20px', width: '100%' }}
+        />
+        <Select
+          label="Rank"
+          placeholder="Enter your rank"
+          value={rank}
+          onChange={setRank}
+          data={rankOptions}
+          required
+          style={{ marginBottom: '20px', width: '100%' }}
+        />
+        <TextInput
+          label="Description"
+          placeholder="Enter a description about yourself"
+          value={description}
+          onChange={handleDescription}
+          required // Make field required
+          style={{ marginBottom: '20px', width: '100%' }}
+        />
         <TextInput
           label="Riot ID (with Tag #)"
           placeholder="Enter your Riot ID with tag (e.g., Ekansh#1234)"
@@ -152,14 +308,24 @@ export default function Profile() {
         {errors.riotId && ( // Show error message for Riot ID
           <Text color="red" style={{ marginBottom: '10px' }}>{errors.riotId}</Text>
         )}
+        <FileInput
+          label="Profile Picture"
+          placeholder="Upload a profile picture"
+          type="file"
+          value={profilePicture}
+          onChange={handleProfilePictureChange}
+          style={{ marginBottom: '20px', width: '100%' }}
+          accept="image/png,image/jpeg,image/jpg"
+          required
+        />
         <TextInput
           disabled
-          label="Discord ID"
-          placeholder="Discord ID"
+          label="Discord Username"
+          placeholder="Discord Username"
           style={{ marginBottom: '20px', width: '100%' }}
         />
-        <Button 
-          onClick={() => {}} 
+        <Button
+          onClick={() => {createAccountRequest()}}
           disabled={isSubmitDisabled} // Disable if the form is invalid or fields are empty
         >
           Submit
