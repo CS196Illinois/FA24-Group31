@@ -197,7 +197,7 @@ public class PostgreSQLController {
   }
 
   public List<User> getUsers() throws SQLException {
-    List<User> users = new ArrayList<User>();
+    List<User> users = new ArrayList<>();
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
@@ -205,14 +205,13 @@ public class PostgreSQLController {
       String sqlPrivate = "SELECT * FROM private";
       String sqlPublic = "SELECT * FROM public";
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
-          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
 
         ResultSet priv = stmtPrivate.executeQuery();
         ResultSet pub = stmtPublic.executeQuery();
 
         while (priv.next() && pub.next()) {
           if (priv.getArray("one_way_matched") == null) {}
-
           PrivateUser privateUser =
               new PrivateUser(
                   priv.getString("discord_id"),
