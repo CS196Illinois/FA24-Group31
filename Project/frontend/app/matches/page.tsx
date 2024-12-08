@@ -70,6 +70,7 @@ const MatchesPage = () => {
                             <p className={classes.noMatches}>No mutual matches yet!</p>
                         )}
                     </div>
+		    <button className="h-10 self-center">Go back to matching</button>
                 </div>
             </div>
         </div>
