@@ -74,7 +74,7 @@ public class LoginRoutes {
     }
   }
 
-  public class matchUpdate {
+  public static class matchUpdate {
     private String sessionToken;
     private String matchedId;
 
@@ -101,13 +101,13 @@ public class LoginRoutes {
   }
 
   @PostMapping(path = "/api/v1/update_matches")
-  public ResponseEntity<Boolean> updateMatches(@RequestBody matchUpdate matchUpdate) {
+  public ResponseEntity<Boolean> updateMatches(@RequestBody matchUpdate match) {
     OneAndTwoWayMatches oneAndTwoWayMatches = new OneAndTwoWayMatches();
     PostgreSQLController pgController = new PostgreSQLController();
     boolean success =
         oneAndTwoWayMatches.updateMatches(
-            pgController.getDiscordId(matchUpdate.getSessionToken()),
-            pgController.getDiscordIdfromRiot(matchUpdate.getMatchedId()));
+            pgController.getDiscordId(match.getSessionToken()),
+            pgController.getDiscordIdfromRiot(match.getMatchedId()));
     return ResponseEntity.ok(success);
   }
 }

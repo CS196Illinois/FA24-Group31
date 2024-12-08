@@ -70,6 +70,7 @@ export default function SwipeCard() {
 
     const handleSwipe = (direction: 'left' | 'right') => {
 	if (direction == 'right') {
+		console.log(riotId);
 	    fetch('http://10.195.197.251:8080/api/v1/update_matches', {
             method: 'POST',
             headers: {
@@ -148,7 +149,6 @@ export default function SwipeCard() {
                                 {rank}
                             </Badge>
 
-			    {console.log(pronouns)}
                             {pronouns.map((pronouns) => (
                                 <Badge key={pronouns} color="blue" variant="light">
                                     {pronouns}
