@@ -1,4 +1,5 @@
 'use client';
+
 import React from 'react';
 import {Container, Button, Text} from '@mantine/core';
 import {HeaderSimple} from "../header";

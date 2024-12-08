@@ -33,9 +33,16 @@ export function AboutUs() {
                     <Space h = "lg" />
                     <Space h = "lg" />
                     <Space h = "lg" />
-                    <Text size="xl" color="white"> Project Manager: Jeffrey Huang </Text>
+                    <Text size="lg" color="white"> <b> Project Manager:</b> Jeffrey Huang </Text>
                     {/* Put other names here */}
-                    <Text color="white"> add other names and group pic</Text>
+                    <Text size="lg" color="white"> <b> Frontend and Mobile Developer:</b> Ekansh Arora </Text>
+                    <Text size="lg" color="white"> <b> Frontend Developer and Designer:</b> Enya Chen </Text>
+                    <Text size="lg" color="white"> <b> Frontend Developer:</b> Maya Swaminathan </Text>
+                    <Text size="lg" color="white"> <b> Frontend Developer:</b> Barry Liu </Text>
+                    <Text size="lg" color="white"> <b> Frontend Developer:</b> Carlton Yuan Bo Woo </Text>
+                    <Text size="lg" color="white"> <b> Backend Developer:</b> Raymond Yang </Text>
+                    <Text size="lg" color="white"> <b> Backend Developer:</b> Vinay Rajagopalan </Text>
+                    <Text size="lg" color="white"> <b> Backend Developer:</b> Adhi Thirumala </Text>
 
                 </Container>
             </section>
