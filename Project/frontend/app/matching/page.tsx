@@ -1,7 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import SwipeProfiles from './components/SwipeProfiles';
+import FilterProfiles from './components/FilterProfiles'; // Importing FilterProfiles component
 import classes from './style.module.css'; // Importing CSS file
 import { HeaderSimple } from '../header';
 
@@ -19,6 +20,7 @@ const profilesData = [
       title: 'Diamond',
       image: '/images/diamond_rank.png',
     },
+    age: 25,
   },
   {
     name: 'Jamie Lee',
@@ -33,6 +35,7 @@ const profilesData = [
       title: 'Platinum',
       image: '/images/platinum_rank.png',
     },
+    age: 28,
   },
   {
     name: 'Chris Taylor',
@@ -47,18 +50,20 @@ const profilesData = [
       title: 'Gold',
       image: '/images/gold_rank.png',
     },
+    age: 30,
   },
 ];
 
-
 const MatchingPage: React.FC = () => {
+  const [filters, setFilters] = useState({ roles: [], rank: '', ageRange: [18, 35] });
+
   return (
     <div>
-      <HeaderSimple/>
-    
+      <HeaderSimple />
       <div className={classes.homepageContainer}>
-          <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
-          <SwipeProfiles profiles={profilesData} />
+      	<FilterProfiles onFilterChange={setFilters} />
+        <h1 className={classes.homepageTitle}>Swipe Profiles</h1>
+        <SwipeProfiles profiles={profilesData} filters={filters} />
       </div>
     </div>
   );

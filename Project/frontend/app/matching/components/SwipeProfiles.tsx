@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProfileCard from './ProfileCard'; // Import the ProfileCard component
-import classes from './profiles.module.css'
+import classes from './profiles.module.css';
+
+interface Filter {
+  roles: string[];
+  rank: string;
+  ageRange: [number, number];
+}
 
 interface SwipeProfilesProps {
   profiles: {
@@ -16,39 +22,51 @@ interface SwipeProfilesProps {
       title: string; // Rank as a string
       image: string; // Rank image URL
     };
+    age: number; // Add age property
   }[];
+  filters: Filter;
 }
 
-const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
+const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [filteredProfiles, setFilteredProfiles] = useState(profiles);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
   const [dragging, setDragging] = useState(false);
   const [startPosition, setStartPosition] = useState<number | null>(null);
   const [dragDistance, setDragDistance] = useState(0);
 
+  useEffect(() => {
+    const { roles, rank, ageRange } = filters;
+    const filtered = profiles.filter(profile => {
+      const roleMatch = roles.length ? roles.some(role => profile.roles.includes(role)) : true;
+      const rankMatch = rank ? profile.rank.title === rank : true;
+      const ageMatch = profile.age >= ageRange[0] && profile.age <= ageRange[1];
+      return roleMatch && rankMatch && ageMatch;
+    });
+    setFilteredProfiles(filtered);
+  }, [filters, profiles]);
+
   const swipeLeft = useCallback(() => {
-    if (currentIndex < profiles.length) {
+    if (currentIndex < filteredProfiles.length) {
       setSwipeDirection('left');
-      // Set a timeout to delay updating the currentIndex to allow for the animation to complete
       setTimeout(() => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
       }, 300); // Match with CSS transition duration
     }
-  }, [currentIndex, profiles.length]);
+  }, [currentIndex, filteredProfiles.length]);
 
   const swipeRight = useCallback(() => {
-    if (currentIndex < profiles.length) {
+    if (currentIndex < filteredProfiles.length) {
       setSwipeDirection('right');
-      // Set a timeout to delay updating the currentIndex to allow for the animation to complete
       setTimeout(() => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
       }, 300); // Match with CSS transition duration
     }
-  }, [currentIndex, profiles.length]);
+  }, [currentIndex, filteredProfiles.length]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setDragging(true);
@@ -66,17 +84,15 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
     if (dragging) {
       setDragging(false);
 
-      // Check if the drag distance exceeds the threshold
       if (dragDistance > 100) {
-        swipeRight(); // Trigger right swipe if dragged right beyond threshold
+        swipeRight();
       } else if (dragDistance < -100) {
-        swipeLeft(); // Trigger left swipe if dragged left beyond threshold
+        swipeLeft();
       } else {
-        // Reset position if threshold not met
         setDragDistance(0);
       }
 
-      setStartPosition(null); // Clear start position
+      setStartPosition(null);
     }
   };
 
@@ -113,42 +129,31 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
   return (
     <div className={classes.profilesContainer}>
       <div className={classes.profileWrapper}>
-        {currentIndex < profiles.length ? (
-          profiles.map((profile, index) => {
-            // Calculate the transform for the current profile
+        {currentIndex < filteredProfiles.length ? (
+          filteredProfiles.map((profile, index) => {
             const isCurrent = index === currentIndex;
             const translateX =
               isCurrent && dragDistance !== 0
                 ? dragDistance
                 : isCurrent && swipeDirection === 'left'
-                ? -400 // Adjust this value to fit your card width
+                ? -400
                 : isCurrent && swipeDirection === 'right'
-                ? 400 // Adjust this value to fit your card width
+                ? 400
                 : 0;
-  
+
             return (
               <div
                 key={index}
                 className={classes.swipeCard}
                 style={{
                   transform: `translateX(${translateX}px)`,
-                  zIndex: isCurrent ? 20 : 10, // Higher z-index for the current card
-                  opacity: isCurrent ? 1 : 0.5, // Dim other cards
-                  display: isCurrent || index > currentIndex ? 'block' : 'none', // Keep previous cards in the DOM
+                  zIndex: isCurrent ? 20 : 10,
+                  opacity: isCurrent ? 1 : 0.5,
+                  display: isCurrent || index > currentIndex ? 'block' : 'none',
                 }}
                 onMouseDown={handleMouseDown}
               >
-                <ProfileCard
-                  name={profile.name}
-                  image={profile.image}
-                  bio={profile.bio}
-                  pronouns={profile.pronouns}
-                  riotId={profile.riotId}
-                  discordId={profile.discordId}
-                  description={profile.description}
-                  roles={profile.roles}
-                  rank={profile.rank}
-                />
+                <ProfileCard {...profile} />
               </div>
             );
           })
@@ -158,22 +163,10 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles }) => {
           </div>
         )}
       </div>
-  
-      {/* Button Container Positioned at the Bottom */}
-      {currentIndex < profiles.length && (
+      {currentIndex < filteredProfiles.length && (
         <div className={classes.buttonContainer}>
-          <button
-            onClick={swipeLeft}
-            className={classes.swipeButtonLeft}
-          >
-            ⟨
-          </button>
-          <button
-            onClick={swipeRight}
-            className={classes.swipeButtonRight}
-          >
-            ⟩
-          </button>
+          <button onClick={swipeLeft} className={classes.swipeButtonLeft}>⟨</button>
+          <button onClick={swipeRight} className={classes.swipeButtonRight}>⟩</button>
         </div>
       )}
     </div>
