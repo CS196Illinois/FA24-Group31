@@ -70,7 +70,7 @@ public class MatchingRoutes {
           matching.newFillMatchList();
           matchList = matching.getMatchList();
           if (matchList.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok().build();
           }
           return ResponseEntity.ok(new UserOutput(matchList.getFirst()));
         }
