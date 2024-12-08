@@ -1,4 +1,4 @@
-// app/loading-screen/page.tsx
+// Add an empty dependency array here
 'use client'
 
 import {useState, useEffect} from 'react'
@@ -29,8 +29,27 @@ export default function LoadingScreen() {
         // Simulate API call
         const fetchData = async () => {
             try {
-                const response = await fetch('https://api.yourdatingapp.com/auth') // Replace with your actual API endpoint
-                const data = await response.json()
+                // Get the access token from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const accessToken = urlParams.get('code');
+
+                const response = await fetch('http://localhost:8080/api/v1/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({code: accessToken}),
+                });
+
+                const data = await response.json();
+                localStorage.setItem('sessionToken', data.sessionToken);
+                if (data.success === true) {
+                    window.location.href = '/matching';
+                } else {
+                    window.location.href = '/profile';
+                }
+
+                console.log('Login successful:', data);
 
                 setLoading(false)
             } catch (error) {
@@ -42,7 +61,7 @@ export default function LoadingScreen() {
         fetchData()
 
         return () => clearInterval(textInterval)
-    }, [])
+    }, []) // Add an empty dependency array here
 
     return (
         <div className={styles.container}>
