@@ -101,6 +101,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
     }, [dragging, dragDistance, swipeLeft, swipeRight]);
 
     // Filter effect
+    /*
     useEffect(() => {
         const {roles, rank, ageRange} = filters;
         const filtered = profiles.filter(profile => {
@@ -111,6 +112,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
         });
         setFilteredProfiles(filtered);
     }, [filters, profiles]);
+    */
 
     // Mouse event listeners
     useEffect(() => {
@@ -170,10 +172,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
                             >
                                 <ProfileCard
                                     {...profile}
-                                    rank={{
-                                        title: profile.rank,
-                                        image: ''
-                                    }}
+                                    rank={profile.rank}
                                     description=""
                                 />
                             </div>

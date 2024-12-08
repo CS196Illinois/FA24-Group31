@@ -55,7 +55,7 @@ public class MatchingRoutes {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping(path = "/api/v1/next_user")
+  @PostMapping(path = "/api/v1/next_user")
   public ResponseEntity<UserOutput> nextUser(@RequestBody JsonObject token) {
     PostgreSQLController pgController = new PostgreSQLController();
     String sessionToken = token.get("session_token").getAsString();
