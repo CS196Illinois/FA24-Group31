@@ -29,9 +29,9 @@ export default function LoadingScreen() {
         // Simulate API call
         const fetchData = async () => {
             try {
-                const url = new URL(window.location.href);
-                const hashParams = new URLSearchParams(url.hash.substring(1));
-                const accessToken = hashParams.get('access_token');
+                // Get the access token from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const accessToken = urlParams.get('code');
 
                 const response = await fetch('http://localhost:8080/api/v1/login', {
                     method: 'POST',

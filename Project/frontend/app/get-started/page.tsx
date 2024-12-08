@@ -9,8 +9,8 @@ import styles from './getStarted.module.css';
 
 const GetStarted = () => {
     const discordLoginParams: DiscordLoginParams = {
-        clientId: '1292671408026943532',
-        redirectUri: 'http://localhost:3000/login',
+        clientId: 'thing',
+        redirectUri: 'secret',
         responseType: 'token',
         scopes: ['identify'],
     }
@@ -31,7 +31,10 @@ const GetStarted = () => {
                     <Text className={styles.getStartedText}>This is a blank page for new
                         users.</Text>
                     <Button
-                        onClick={() => (window.location.href = buildUrl())}
+                        onClick={() => {
+                            console.log('Discord login clicked');
+                            return (window.location.href = process.env.NEXT_PUBLIC_DISCORD_LINK || '');
+                        }}
                         disabled={isLoading}
                         leftSection={<FaDiscord/>}
                         style={{

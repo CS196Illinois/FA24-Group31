@@ -1,9 +1,9 @@
 package org.server;
 
-import io.mokulu.discord.oauth.model.TokensResponse;
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.google.gson.JsonObject;
 import java.io.IOException;
-
-import org.json.JSONObject;
+import java.util.concurrent.ExecutionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,10 +53,12 @@ public class LoginRoutes {
    * @return the response entity containing whether the login was successful and the session token
    */
   @PostMapping(path = "/api/v1/login")
-  public ResponseEntity<ReturnValue> login(@RequestBody String code) throws IOException {
+  public ResponseEntity<ReturnValue> login(@RequestBody JsonObject code)
+      throws IOException, ExecutionException, InterruptedException {
     PostgreSQLController pgController = new PostgreSQLController();
-    JSONObject tokens = DiscordOps.getTokens(code);
-    String discordId = DiscordOps.getDiscordId(tokens.getString("access_token"));
+    DiscordOps discordOps = new DiscordOps();
+    OAuth2AccessToken tr = discordOps.getTokens(code.get("code").getAsString());
+    String discordId = discordOps.getDiscordId(tr.getAccessToken());
     String sessionToken = pgController.doesUserExist(discordId);
     if (sessionToken != null) {
       return ResponseEntity.ok(new ReturnValue(true, sessionToken));
@@ -64,8 +66,7 @@ public class LoginRoutes {
       return ResponseEntity.ok(
           new ReturnValue(
               false,
-              pgController.createAuthRow(
-                  discordId, tokens.getString("access_token"), tokens.getString("refresh_token"))));
+              pgController.createAuthRow(discordId, tr.getAccessToken(), tr.getRefreshToken())));
     }
   }
 }
