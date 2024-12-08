@@ -57,7 +57,7 @@ public class MatchingRoutes {
 
   @GetMapping(path = "/api/v1/next_user")
   public ResponseEntity<UserOutput> nextUser(@RequestBody JsonObject token) {
-    PostgreSQLController pgController = new PostgreSQLController();
+12    PostgreSQLController pgController = new PostgreSQLController();
     String sessionToken = token.get("session_token").getAsString();
     String discordId = pgController.getDiscordId(sessionToken);
     if (pgController.hasUserBeenCreated(discordId)) {

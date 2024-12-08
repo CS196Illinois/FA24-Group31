@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ProfileCard from './ProfileCard'; // Import the ProfileCard component
+import ProfileCard from './ProfileCard';
 import classes from './profiles.module.css';
 
 interface Filter {
@@ -13,16 +13,12 @@ interface SwipeProfilesProps {
     name: string;
     image: string;
     bio: string;
-    pronouns: string;
+    pronouns: string[];
     riotId: string;
     discordId: string;
-    description: string;
-    roles: string[]; // Array of image URLs
-    rank: {
-      title: string; // Rank as a string
-      image: string; // Rank image URL
-    };
-    age: number; // Add age property
+    roles: string[];
+    rank: string;
+    age: number;
   }[];
   filters: Filter;
 }
@@ -35,17 +31,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
   const [startPosition, setStartPosition] = useState<number | null>(null);
   const [dragDistance, setDragDistance] = useState(0);
 
-  useEffect(() => {
-    const { roles, rank, ageRange } = filters;
-    const filtered = profiles.filter(profile => {
-      const roleMatch = roles.length ? roles.some(role => profile.roles.includes(role)) : true;
-      const rankMatch = rank ? profile.rank.title === rank : true;
-      const ageMatch = profile.age >= ageRange[0] && profile.age <= ageRange[1];
-      return roleMatch && rankMatch && ageMatch;
-    });
-    setFilteredProfiles(filtered);
-  }, [filters, profiles]);
-
+  // Define swipe functions first
   const swipeLeft = useCallback(() => {
     if (currentIndex < filteredProfiles.length) {
       setSwipeDirection('left');
@@ -53,7 +39,7 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
-      }, 300); // Match with CSS transition duration
+      }, 300);
     }
   }, [currentIndex, filteredProfiles.length]);
 
@@ -64,23 +50,24 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setSwipeDirection(null);
         setDragDistance(0);
-      }, 300); // Match with CSS transition duration
+      }, 300);
     }
   }, [currentIndex, filteredProfiles.length]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  // Then define mouse handling functions
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     setDragging(true);
     setStartPosition(e.clientX);
-  };
+  }, []);
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (dragging && startPosition !== null) {
       const distance = e.clientX - startPosition;
       setDragDistance(distance);
     }
-  };
+  }, [dragging, startPosition]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (dragging) {
       setDragging(false);
 
@@ -94,23 +81,34 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
 
       setStartPosition(null);
     }
-  };
+  }, [dragging, dragDistance, swipeLeft, swipeRight]);
 
+  // Filter effect
+  useEffect(() => {
+    const { roles, rank, ageRange } = filters;
+    const filtered = profiles.filter(profile => {
+      const roleMatch = roles.length === 0 || roles.some(role => profile.roles.includes(role));
+      const rankMatch = !rank || profile.rank === rank;
+      const ageMatch = profile.age >= ageRange[0] && profile.age <= ageRange[1];
+      return roleMatch && rankMatch && ageMatch;
+    });
+    setFilteredProfiles(filtered);
+  }, [filters, profiles]);
+
+  // Mouse event listeners
   useEffect(() => {
     if (dragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [dragging, handleMouseMove, handleMouseUp]);
 
+  // Keyboard event listeners
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
@@ -120,9 +118,9 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [swipeLeft, swipeRight]);
 
@@ -153,7 +151,14 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({ profiles, filters }) => {
                 }}
                 onMouseDown={handleMouseDown}
               >
-                <ProfileCard {...profile} />
+                <ProfileCard 
+                  {...profile}
+                  rank={{
+                    title: profile.rank,
+                    image: ''
+                  }}
+                  description=""
+                />
               </div>
             );
           })
