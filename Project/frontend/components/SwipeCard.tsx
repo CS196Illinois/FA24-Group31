@@ -12,6 +12,7 @@ interface User {
     roles: string[];
     rank: string;
     image: string;
+    age: number;
 }
 
 export default function SwipeCard() {
@@ -90,15 +91,17 @@ export default function SwipeCard() {
                             <Image src={user.image} height={160} alt={`${user.name}`}/>
                         </Card.Section>
                         <Group position="apart" style={{marginBottom: 5, marginTop: '10px'}}>
-                            <Text weight={500}>{user.name}</Text>
-                            <Badge color="pink" variant="light">
-                                {user.rank}
-                            </Badge>
+                            <Text weight={800}>{user.name}</Text>
+                        	<Text weight={800}>{user.age}</Text>
                         </Group>
                         <Text size="sm" style={{color: '#555', lineHeight: 1.5}}>
                             {user.bio}
                         </Text>
                         <Group spacing="xs" style={{marginTop: '10px'}}>
+			<Badge color="pink" variant="light">
+                                {user.rank}
+                            </Badge>
+
                             {user.pronouns.map((pronoun) => (
                                 <Badge key={pronoun} color="blue" variant="light">
                                     {pronoun}
