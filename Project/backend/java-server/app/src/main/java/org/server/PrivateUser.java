@@ -7,9 +7,10 @@ import java.util.Arrays;
 /** This class represents a private user. @Author adhit2 */
 public class PrivateUser {
   private String discordId;
-  private LocalDate dob;
+  private String dob;
   private String[] oneWayMatched;
   private String[] twoWayMatched;
+  private String[] seen;
 
   /**
    * Constructs a new {@link PrivateUser} with the specified discord ID, date of birth, one-way.
@@ -19,16 +20,16 @@ public class PrivateUser {
    * @param oneWayMatched the one-way matched
    * @param twoWayMatched the two-way matched
    */
-  public PrivateUser(String discordId, String dob, String[] oneWayMatched, String[] twoWayMatched) {
+  public PrivateUser(
+      String discordId, String dob, String[] oneWayMatched, String[] twoWayMatched, String[] seen) {
     this.discordId = discordId;
-    this.dob = LocalDate.parse(dob);
+    this.dob = dob;
     this.oneWayMatched = oneWayMatched;
     this.twoWayMatched = twoWayMatched;
+    this.seen = seen;
   }
 
   /** Constructs a new {@link PrivateUser}. */
-  public PrivateUser() {}
-
   public String getDiscordId() {
     return discordId;
   }
@@ -38,15 +39,15 @@ public class PrivateUser {
   }
 
   public int getAge() {
-    return Period.between(dob, LocalDate.now()).getYears();
+    return Period.between(LocalDate.parse(dob), LocalDate.now()).getYears();
   }
 
-  public LocalDate getDoB() {
+  public String getDoB() {
     return dob;
   }
 
   public void setDoB(String dob) {
-    this.dob = LocalDate.parse(dob);
+    this.dob = dob;
   }
 
   public String[] getOneWayMatched() {
@@ -79,5 +80,13 @@ public class PrivateUser {
         + ", twoWayMatched="
         + Arrays.toString(twoWayMatched)
         + '}';
+  }
+
+  public String[] getSeen() {
+    return seen;
+  }
+
+  public void setSeen(String[] seen) {
+    this.seen = seen;
   }
 }

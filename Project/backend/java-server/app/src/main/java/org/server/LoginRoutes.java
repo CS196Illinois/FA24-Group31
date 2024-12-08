@@ -2,16 +2,16 @@ package org.server;
 
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.concurrent.ExecutionException;
-
-import com.google.gson.JsonParser;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /** This class represents the routes for login. {@code @Author} adhit2 */
 @RestController
@@ -94,4 +94,5 @@ public class LoginRoutes {
     boolean success = oneAndTwoWayMatches.updateMatches(userId, matchedId);
     return ResponseEntity.ok(new ReturnValue(success, ""));
   }
+
 }

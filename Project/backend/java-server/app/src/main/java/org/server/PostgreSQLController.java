@@ -1,6 +1,8 @@
 package org.server;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.checkerframework.checker.units.qual.A;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
@@ -82,7 +84,7 @@ public class PostgreSQLController {
   /**
    * Creates a new auth row in the database.
    *
-   * @param user the user to create:w
+   * @param user the user to create
    */
   public void createUser(User user) {
     Connection connection = null;
@@ -92,8 +94,8 @@ public class PostgreSQLController {
 
       String sqlPrivate =
           "INSERT INTO private "
-              + " (discord_id, dob, one_way_matched, two_way_matched)"
-              + " VALUES (?, ?, '{}', '{}')";
+              + " (discord_id, dob, one_way_matched, two_way_matched, seen)"
+              + " VALUES (?, ?, '{}', '{}', '{}')";
       String sqlPublic =
           "INSERT INTO public"
               + " (discord_id, riot_id, first_name, last_name,"
@@ -163,7 +165,8 @@ public class PostgreSQLController {
                   priv.getString("discord_id"),
                   priv.getDate("dob").toString(),
                   (String[]) priv.getArray("one_way_matched").getArray(),
-                  (String[]) priv.getArray("two_way_matched").getArray());
+                  (String[]) priv.getArray("two_way_matched").getArray(),
+                  (String[]) priv.getArray("seen").getArray());
           PublicUser publicUser =
               new PublicUser(
                   pub.getString("discord_id"),
@@ -196,31 +199,78 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("User not found");
   }
 
-  public List<User> filterWithSQL(int minAge, int maxAge, String[] ranks, String[] roles) throws SQLException {
+  public void resetSeen(String discordId) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "UPDATE private SET seen = '{}' WHERE discord_id = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate)) {
+        stmtPrivate.setString(1, discordId);
+        stmtPrivate.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+  }
+
+  public List<User> filterWithSQL(String sessionToken) throws SQLException {
     List<User> users = new ArrayList<>();
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
 
-      String sql = "SELECT * FROM private JOIN public ON private.discord_id = public.discord_id WHERE EXTRACT(YEAR FROM age(private.dob)) BETWEEN ? AND ? AND public.rank = ANY(?) AND public.roles && ?";
+      // update to make sure that the user is not in seen
+      // make sure that the user is not the user making the query
+      String sql =
+          "SELECT * FROM private JOIN public ON private.discord_id = "
+              + "public.discord_id WHERE EXTRACT(YEAR FROM age(private.dob))"
+              + " BETWEEN ? AND ? AND public.rank = ANY(?) AND public.roles && ? "
+              + "AND private.discord_id NOT IN "
+              + "(SELECT unnest(seen) FROM private WHERE discord_id = ?)"
+              + "AND private.discord_id != ?";
 
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setInt(1, minAge);
-        stmt.setInt(2, maxAge);
-        stmt.setArray(3, connection.createArrayOf("text", ranks));
-        stmt.setArray(4, connection.createArrayOf("text", roles));
+        UserPrefs prefs = getUserPreferences(sessionToken);
+        stmt.setInt(1, prefs.getMinAge());
+        stmt.setInt(2, prefs.getMaxAge());
+        stmt.setArray(3, connection.createArrayOf("text", prefs.getRanks()));
+        stmt.setArray(4, connection.createArrayOf("text", prefs.getRoles()));
+        String s = getDiscordId(sessionToken);
+        stmt.setString(5, s);
+        stmt.setString(6, s);
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
-          PrivateUser privateUser = new PrivateUser(
+          PrivateUser privateUser =
+              new PrivateUser(
                   rs.getString("discord_id"),
                   rs.getDate("dob").toString(),
-                  rs.getArray("one_way_matched") != null ? (String[]) rs.getArray("one_way_matched").getArray() : new String[0],
-                  rs.getArray("two_way_matched") != null ? (String[]) rs.getArray("two_way_matched").getArray() : new String[0]
-          );
+                  rs.getArray("one_way_matched") != null
+                      ? (String[]) rs.getArray("one_way_matched").getArray()
+                      : new String[0],
+                  rs.getArray("two_way_matched") != null
+                      ? (String[]) rs.getArray("two_way_matched").getArray()
+                      : new String[0],
+                  rs.getArray("seen") != null
+                      ? (String[]) rs.getArray("seen").getArray()
+                      : new String[0]);
 
-          PublicUser publicUser = new PublicUser(
+          PublicUser publicUser =
+              new PublicUser(
                   rs.getString("discord_id"),
                   rs.getString("riot_id"),
                   rs.getString("first_name"),
@@ -229,8 +279,7 @@ public class PostgreSQLController {
                   rs.getString("description"),
                   (String[]) rs.getArray("roles").getArray(),
                   rs.getString("rank"),
-                  rs.getString("image")
-          );
+                  rs.getString("image"));
 
           users.add(new User(privateUser, publicUser));
         }
@@ -278,6 +327,9 @@ public class PostgreSQLController {
                       : new String[0],
                   priv.getArray("two_way_matched") != null
                       ? (String[]) priv.getArray("two_way_matched").getArray()
+                      : new String[0],
+                  priv.getArray("seen") != null
+                      ? (String[]) priv.getArray("seen").getArray()
                       : new String[0]);
 
           PublicUser publicUser =
@@ -316,17 +368,47 @@ public class PostgreSQLController {
   }
 
   public boolean existsInOneWay(String discordId, String matchedId) {
-    Connection connection = null;
+      Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
-      String sql = "SELECT * FROM private WHERE ? = ANY(one_way_matched) AND discord_id = ?";
+         String sql = "SELECT * FROM private WHERE ? = ANY(one_way_matched) AND discord_id = ?";
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
         stmt.setString(1, discordId);
         stmt.setString(2, matchedId);
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
           return true;
+  public void updateUserPreferences(UserPrefs prefs) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+
+      String sqlPrivate =
+          "UPDATE user_preferences SET min_age = ?, max_age = ?, ranks = ?, roles = ? WHERE session_token = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate)) {
+        stmtPrivate.setInt(1, prefs.getMinAge());
+        stmtPrivate.setInt(2, prefs.getMaxAge());
+        stmtPrivate.setArray(3, connection.createArrayOf("text", prefs.getRanks()));
+        stmtPrivate.setArray(4, connection.createArrayOf("text", prefs.getRoles()));
+        stmtPrivate.setString(5, prefs.getSessionToken());
+        int result = stmtPrivate.executeUpdate();
+        if (result == 0) {
+          String sqlInsert =
+              "INSERT INTO user_preferences (session_token, min_age, max_age, ranks, roles) VALUES (?, ?, ?, ?, ?)";
+          try (PreparedStatement stmtInsert = connection.prepareStatement(sqlInsert)) {
+            stmtInsert.setString(1, prefs.getSessionToken());
+            stmtInsert.setInt(2, prefs.getMinAge());
+            stmtInsert.setInt(3, prefs.getMaxAge());
+            stmtInsert.setArray(4, connection.createArrayOf("text", prefs.getRanks()));
+            stmtInsert.setArray(5, connection.createArrayOf("text", prefs.getRoles()));
+            stmtInsert.executeUpdate();
+          } catch (SQLException e) {
+            connection.rollback();
+            throw e;
+          }
+
         }
         connection.commit();
       } catch (SQLException e) {
@@ -344,7 +426,8 @@ public class PostgreSQLController {
         System.err.println(e.getMessage());
       }
     }
-    return false;
+        return false;
+
   }
 
   public boolean updateOneWayMatched(String discordId, String matchedId) {
@@ -440,6 +523,7 @@ public class PostgreSQLController {
       }
     }
     return true;
+
   }
 
   /**
@@ -620,6 +704,43 @@ public class PostgreSQLController {
     throw new IllegalArgumentException("Invalid Session Token");
   }
 
+  public UserPrefs getUserPreferences(String sessionToken) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "SELECT * FROM user_preferences WHERE session_token = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate)) {
+        stmtPrivate.setString(1, sessionToken);
+        ResultSet priv = stmtPrivate.executeQuery();
+        if (priv.next()) {
+          return new UserPrefs(
+              getDiscordId(sessionToken),
+              priv.getInt("min_age"),
+              priv.getInt("max_age"),
+              (String[]) priv.getArray("ranks").getArray(),
+              (String[]) priv.getArray("roles").getArray(),
+              priv.getString("session_token"));
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    throw new IllegalArgumentException("User not found");
+  }
+
   public void setRefreshToken(String discordId, String refreshToken) {
     Connection connection = null;
     try {
@@ -751,6 +872,34 @@ public class PostgreSQLController {
       }
     }
     return false;
+  }
+
+  public void addUserToSeen(String discordId, String seenUser) {
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "UPDATE private SET seen = array_append(seen, ?) WHERE discord_id = ?";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate)) {
+        stmtPrivate.setString(1, seenUser);
+        stmtPrivate.setString(2, discordId);
+        stmtPrivate.executeUpdate();
+        connection.commit();
+      } catch (SQLException e) {
+        connection.rollback();
+        throw e;
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
   }
 
   /** Tests the connection to the database. */
