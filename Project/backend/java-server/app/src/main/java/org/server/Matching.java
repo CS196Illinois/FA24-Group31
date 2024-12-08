@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Matching {
   private List<User> matchList = new ArrayList<>();
-  private final String sessionToken;
 
   public Matching(String sessionToken) {
     this.sessionToken = sessionToken;
   }
+
 
   public void newFillMatchList() {
     matchList.clear();

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,4 +75,24 @@ public class LoginRoutes {
               pgController.createAuthRow(discordId, tr.getAccessToken(), tr.getRefreshToken())));
     }
   }
+
+  @PostMapping(path = "/api/v1/matching")
+  public ResponseEntity<List<User>> matching(@RequestParam int minAge, @RequestParam int maxAge, @RequestParam String[] ranks, @RequestParam String[] roles) throws IOException {
+    Matching matcher = new Matching();
+    boolean success = matcher.fillMatches(minAge, maxAge, ranks, roles);
+    if (success) {
+      List<User> matches = matcher.getMatchList();
+      return ResponseEntity.ok(matches);
+    } else {
+      return ResponseEntity.ok(new ArrayList<>());
+    }
+  }
+
+  @PostMapping(path = "/api/v1/update_matches")
+  public ResponseEntity<ReturnValue> updateMatches(@RequestParam String userId, @RequestParam String matchedId) {
+    OneAndTwoWayMatches oneAndTwoWayMatches = new OneAndTwoWayMatches();
+    boolean success = oneAndTwoWayMatches.updateMatches(userId, matchedId);
+    return ResponseEntity.ok(new ReturnValue(success, ""));
+  }
+
 }
