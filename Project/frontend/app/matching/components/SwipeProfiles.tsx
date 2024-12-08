@@ -171,9 +171,16 @@ const SwipeProfiles: React.FC<SwipeProfilesProps> = ({profiles, filters}) => {
                                 onMouseDown={handleMouseDown}
                             >
                                 <ProfileCard
-                                    {...profile}
+					name={profile.name}
+					age={profile.age}
+					image={profile.image}
+					bio={profile.bio}
+					pronouns={profile.pronouns}
+					riotId={profile.riotId}
+					discordId={profile.discordId}
+					description={profile.description}
+				    roles={profile.roles}
                                     rank={profile.rank}
-                                    description=""
                                 />
                             </div>
                         );
