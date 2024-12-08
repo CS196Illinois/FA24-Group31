@@ -23,20 +23,7 @@ public class PostgreSQLController {
 
   private final Properties props;
   private final String url;
-
-  /**
-   * Constructs a new {@link PostgreSQLController} with the specified url, user, and password.
-   *
-   * @param url the url of the PostgreSQL database
-   * @param user the user of the PostgreSQL database
-   * @param password the password of the PostgreSQL database
-   */
-  public PostgreSQLController(String url, String user, String password) {
-    props = new Properties();
-    props.setProperty("user", user);
-    props.setProperty("password", password);
-    this.url = "jdbc:postgresql://" + url + "/";
-  }
+  private final DiscordOps discordOps = new DiscordOps();
 
   /**
    * Constructs a new {@link PostgreSQLController} with the specified url, user, and password from
@@ -68,7 +55,7 @@ public class PostgreSQLController {
           "INSERT INTO auth "
               + "(discord_id, session_token, refresh_token, auth_token)"
               + " VALUES (?, ?, ?, ?)";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, discordID);
         stmtAuth.setString(2, uuid);
         stmtAuth.setString(3, refreshToken);
@@ -117,7 +104,6 @@ public class PostgreSQLController {
       String image,
       LocalDate dob) {
     Connection connection = null;
-    String uuid = UUID.randomUUID().toString();
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
@@ -131,10 +117,6 @@ public class PostgreSQLController {
               + " (discord_id, riot_id, first_name, last_name,"
               + " pronouns, description, roles, rank, image) "
               + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      String sqlAuth =
-          "INSERT INTO auth "
-              + "(discord_id, session_token, refresh_token, auth_token)"
-              + " VALUES (?, ?, ?, ?)";
 
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
@@ -187,7 +169,7 @@ public class PostgreSQLController {
       String sqlPrivate = "SELECT * FROM private WHERE discord_id = ?";
       String sqlPublic = "SELECT * FROM public WHERE discord_id = ?";
       try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
-          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
+          PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic)) {
         stmtPrivate.setString(1, discordID);
         stmtPublic.setString(1, discordID);
         ResultSet priv = stmtPrivate.executeQuery();
@@ -307,7 +289,7 @@ public class PostgreSQLController {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
       String sqlAuth = "SELECT auth_token FROM auth WHERE discord_id = ?";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, discordID);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
@@ -345,7 +327,7 @@ public class PostgreSQLController {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
       String sqlAuth = "SELECT session_token FROM auth WHERE discord_id = ?";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, discordID);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
@@ -442,13 +424,13 @@ public class PostgreSQLController {
    * @param sessionToken the session token of the user
    * @return the discord ID of the user
    */
-  public String getDiscordID(String sessionToken) {
+  public String getDiscordId(String sessionToken) {
     Connection connection = null;
     try {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
       String sqlAuth = "SELECT discord_id FROM auth WHERE session_token = ?";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, sessionToken);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
@@ -485,7 +467,7 @@ public class PostgreSQLController {
       connection = DriverManager.getConnection(url, props);
       connection.setAutoCommit(false);
       String sqlAuth = "SELECT refresh_token FROM auth WHERE discord_id = ?";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, discordId);
         ResultSet auth = stmtAuth.executeQuery();
         if (auth.next()) {
@@ -511,19 +493,17 @@ public class PostgreSQLController {
   }
 
   /**
-   * updates the auth token for given discord ID
+   * updates the auth token for given discord ID.
    *
    * @param discordId the discord ID of the user
-   * @throws IOException if an error occurs
    */
-  public void changeAuthToken(String discordId) throws IOException {
+  public void changeAuthToken(String authToken, String discordId) {
     Connection connection = null;
-    String authToken = DiscordOps.refreshToken(getRefreshToken(discordId));
     try {
-      connection = DriverManager.getConnection(url, props);
+      connection = DriverManager.getConnection(url);
       connection.setAutoCommit(false);
       String sqlAuth = "UPDATE auth SET auth_token = ? WHERE discord_id = ?";
-      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth); ) {
+      try (PreparedStatement stmtAuth = connection.prepareStatement(sqlAuth)) {
         stmtAuth.setString(1, authToken);
         stmtAuth.setString(2, discordId);
         stmtAuth.executeUpdate();
