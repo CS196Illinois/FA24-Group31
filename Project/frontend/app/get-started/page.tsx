@@ -25,6 +25,7 @@ const GetStarted = () => {
 
         {/* Dicsord Login Link INSERT HERE*/}
         {/* <Button component={Link} className={classes.loginButton} mt="xl" justify="center"> Login with Discord </Button> */}
+        <Button component={Link} href="/profile" className={classes.loginButton} mt="xl" justify="center"> Login </Button>
         
         {/* Add any other login methods below if needed...*/}
       </Container>
