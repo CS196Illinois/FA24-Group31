@@ -70,7 +70,7 @@ public class LoginRoutes {
     }
   }
 
-  @PostMapping(path = "api/v1/matching")
+  @PostMapping(path = "/api/v1/matching")
   public ResponseEntity<List<User>> matching(@RequestBody int minAge, @RequestBody int maxAge, @RequestBody String[] ranks, @RequestBody String[] roles) throws IOException {
     Matching matcher = new Matching();
     boolean success = matcher.filterMatches(minAge, maxAge, ranks, roles);
