@@ -18,7 +18,7 @@ public class Main {
    *
    * @param args Command line arguments.
    */
-  public static void main(String[] args) {
+public static void main(String[] args) {
     Dotenv dotenv = Dotenv.load();
     System.setProperty(
         "SPRING_DATASOURCE_URL", "jdbc:postgresql://" + dotenv.get("PGURL") + "/main");

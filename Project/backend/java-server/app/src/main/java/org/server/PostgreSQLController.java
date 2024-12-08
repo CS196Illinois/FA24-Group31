@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -209,6 +211,70 @@ public class PostgreSQLController {
       }
     }
     throw new IllegalArgumentException("User not found");
+  }
+
+  public List<User> getUsers() throws SQLException {
+    List<User> users = new ArrayList<User>();
+    Connection connection = null;
+    try {
+      connection = DriverManager.getConnection(url, props);
+      connection.setAutoCommit(false);
+      String sqlPrivate = "SELECT * FROM private";
+      String sqlPublic = "SELECT * FROM public";
+      try (PreparedStatement stmtPrivate = connection.prepareStatement(sqlPrivate);
+           PreparedStatement stmtPublic = connection.prepareStatement(sqlPublic); ) {
+
+        ResultSet priv = stmtPrivate.executeQuery();
+        ResultSet pub = stmtPublic.executeQuery();
+
+        while (priv.next() && pub.next()) {
+          if (priv.getArray("one_way_matched") == null) {
+
+          }
+          PrivateUser privateUser =
+                  new PrivateUser(
+                          priv.getString("discord_id"),
+                          priv.getDate("dob").toString(),
+                          priv.getArray("one_way_matched") != null
+                            ? (String[]) priv.getArray("one_way_matched").getArray()
+                                  : new String[0],
+                          priv.getArray("two_way_matched") != null
+                          ? (String[]) priv.getArray("two_way_matched").getArray()
+                          :new String[0]);
+
+          PublicUser publicUser =
+                  new PublicUser(
+                          pub.getString("discord_id"),
+                          pub.getString("riot_id"),
+                          pub.getString("first_name"),
+                          pub.getString("last_name"),
+                          (String[]) pub.getArray("pronouns").getArray(),
+                          pub.getString("description"),
+                          (String[]) pub.getArray("roles").getArray(),
+                          pub.getString("rank"),
+                          pub.getString("image"));
+
+          users.add(new User(privateUser, publicUser));
+        }
+        if (!users.isEmpty()) {
+          return users;
+        }
+        connection.commit();
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    } catch (SQLException e) {
+      System.err.println(e.getMessage());
+    } finally {
+      try {
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        System.err.println(e.getMessage());
+      }
+    }
+    throw new IllegalArgumentException("Error, users not found");
   }
 
   /**
