@@ -1,11 +1,9 @@
 package org.server;
 
 import com.google.gson.*;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,9 +37,14 @@ public class ProfileRoutes {
     return new ResponseEntity<>(json, HttpStatus.OK);
   }
 
+  /**
+   * Creates a user.
+   *
+   * @param jsonObject the JSON object
+   * @return the response entity containing whether the user was created
+   */
   @PostMapping("/api/v1/create_user")
-  public ResponseEntity<Boolean> createUser(@RequestBody JsonObject jsonObject)
-      throws IOException, ExecutionException, InterruptedException {
+  public ResponseEntity<Boolean> createUser(@RequestBody JsonObject jsonObject) {
     PostgreSQLController pgController = new PostgreSQLController();
     String sessionToken = jsonObject.get("session_token").getAsString();
     String discordId;
