@@ -234,12 +234,14 @@ public class PostgreSQLController {
       connection.setAutoCommit(false);
 
       // update to make sure that the user is not in seen
+      // make sure that the user is not the user making the query
       String sql =
           "SELECT * FROM private JOIN public ON private.discord_id = "
               + "public.discord_id WHERE EXTRACT(YEAR FROM age(private.dob))"
               + " BETWEEN ? AND ? AND public.rank = ANY(?) AND public.roles && ? "
               + "AND private.discord_id NOT IN "
-              + "(SELECT unnest(seen) FROM private WHERE discord_id = ?)";
+              + "(SELECT unnest(seen) FROM private WHERE discord_id = ?)"
+              + "AND private.discord_id != ?";
 
       try (PreparedStatement stmt = connection.prepareStatement(sql)) {
         UserPrefs prefs = getUserPreferences(sessionToken);
@@ -247,7 +249,9 @@ public class PostgreSQLController {
         stmt.setInt(2, prefs.getMaxAge());
         stmt.setArray(3, connection.createArrayOf("text", prefs.getRanks()));
         stmt.setArray(4, connection.createArrayOf("text", prefs.getRoles()));
-        stmt.setString(5, getDiscordId(sessionToken));
+        String s = getDiscordId(sessionToken);
+        stmt.setString(5, s);
+        stmt.setString(6, s);
 
         ResultSet rs = stmt.executeQuery();
         while (rs.next()) {
